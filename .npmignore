@@ -3,8 +3,5 @@ config/
 demo/
 index.html
 src/
-static/
-test/
-*.log
 
-!dist/
+*.log
