@@ -4,6 +4,7 @@
   "description": "基于vue的即时通讯组件",
   "author": "liuziyang",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
@@ -13,6 +14,11 @@
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lzy1043/vue-im.git"
+  },
+  "main": "dist/rsui.min.js",
   "dependencies": {
     "moment": "^2.19.3",
     "vue": "^2.3.3"
