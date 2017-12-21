@@ -26,12 +26,12 @@
       },
       handleSend (message) {
         this.$refs.rsim.getMessage({
-          content: `你好呀，我是${this.currentChat.username}`,
-          avatar: this.currentChat.avatar,
-          sender: this.currentChat.id,
+          content: '你好呀',
+          avatar: this.lists[0].avatar,
+          sender: this.lists[0].id,
           recver: this.mine.id,
           time: new Date().getTime(),
-          sendername: this.currentChat.username,
+          sendername: this.lists[0].username,
           recvername: this.mine.username
         })
       },

@@ -95,15 +95,6 @@
       },
       emitSend (message) {
         this.$emit('send', message)
-        this.getMessage({
-          content: `你好呀，我是${this.currentChat.username}`,
-          avatar: this.currentChat.avatar,
-          sender: this.currentChat.id,
-          recver: this.mine.id,
-          time: new Date().getTime(),
-          sendername: this.currentChat.username,
-          recvername: this.mine.username
-        })
       },
       handleSearch (keyword) {
         this.cloneLists = this.cloneLists.filter(item => {
