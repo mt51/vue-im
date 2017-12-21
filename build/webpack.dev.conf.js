@@ -8,7 +8,7 @@ var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 
 baseWebpackConfig.entry = {
   app: './demo/main.js',
-  vendors: ['vue', 'vue-router']
+  vendors: ['vue']
 }
 
 // add hot-reload related code to entry chunks

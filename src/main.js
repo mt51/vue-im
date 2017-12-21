@@ -1,13 +1,13 @@
 import IM from './im'
 
-const vueIM = {}
+const VueIM = {}
 
-vueIM.install = function (Vue, opts) {
-  Vue.component('IM', IM)
+VueIM.install = function (Vue, opts) {
+  Vue.component('vue-im', IM)
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
-  vueIM.install(window.Vue)
+  VueIM.install(window.Vue)
 }
 
-export default vueIM
+export default VueIM
