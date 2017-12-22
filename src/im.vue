@@ -12,6 +12,7 @@
     <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
       <span>新消息</span>
     </div>
+    <audio :src="voiceURL" ref="voice"></audio>
   </div>
 </template>
 <script>
@@ -19,7 +20,7 @@
   import middle from '@/components/middle.vue'
   import ChatBox from '@/components/chatbox.vue'
   import log from '@/components/chatlog.vue'
-  import { deepCopy } from '@/util/utils'
+  import { deepCopy, device } from '@/util/utils'
   import localData from '@/util/data.js'
 
   export default {
@@ -46,6 +47,10 @@
       brief: {
         type: Boolean,
         default: false
+      },
+      voice: {
+        type: String,
+        default: 'static/voice/default.mp3'
       }
     },
     data () {
@@ -105,6 +110,7 @@
         this.cloneLists = this.makeCloneLists()
       },
       getMessage (message) {
+        this.voice()
         message.mine = false
         const current = this.cloneLists.find(item => {
           return item.id === message.sender
@@ -194,6 +200,11 @@
       },
       handlePageChange (page) {
         this.$emit('page-change', page)
+      },
+      voice () {
+        const IE = device()
+        if (IE && IE < 9) return
+        this.$refs.voice.play()
       }
     },
     components: {

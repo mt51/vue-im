@@ -36,3 +36,10 @@ export function deepCopy (data) {
   }
   return o
 }
+
+export function device () {
+  const agent = navigator.userAgent.toLowerCase()
+  return (!!window.ActiveXObject || 'ActiveXObject' in window) ? (
+    (agent.match(/msie\s(\d+)/) || [])[1] || '11'
+  ) : false
+}
