@@ -42,7 +42,10 @@
         type: Object,
         required: true
       },
-      mini: false,
+      mini: {
+        type: Boolean,
+        default: false
+      },
       notice: Boolean,
       brief: {
         type: Boolean,
