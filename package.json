@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "基于vue的即时通讯组件",
   "author": "liuziyang",
-  "private": true,
   "license": "MIT",
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -20,8 +19,7 @@
   },
   "main": "dist/rsui.min.js",
   "dependencies": {
-    "moment": "^2.19.3",
-    "vue": "^2.3.3"
+    "moment": "^2.19.3"
   },
   "devDependencies": {
     "sockjs-client": "^1.1.4",
