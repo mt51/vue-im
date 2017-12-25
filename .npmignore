@@ -3,5 +3,11 @@ config/
 demo/
 index.html
 src/
+.babelrc
+.gitignore
+.eslintrc.js
+.eslintignore
+.npmrc
+.postcssrc.js
 
 *.log
