@@ -71,6 +71,7 @@
       },
       handleFocus () {
         this.focusClass = true
+        this.emojiVisible = false
       },
       handleBlur () {
         this.focusClass = false
@@ -185,7 +186,7 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .clearfix::after{
     content: " ";
     display:block;

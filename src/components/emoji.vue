@@ -19,7 +19,7 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .emoji {
   position: absolute;
   top: -126%;

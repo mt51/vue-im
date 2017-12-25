@@ -1,6 +1,6 @@
 <template>
-  <div class="rs-pagination">
-    <ul class="pagination" :class="pageSize">
+  <div class="page">
+    <ul class="pagination">
       <li title="首页" @click="updateCurrentPage(1)" :class="{'disabled':currentPage === 1}">
         <a href="javascript:void(0)" class="previous">
           <span>&laquo;</span>
@@ -45,10 +45,6 @@
         type: Number,
         required: true
       },
-      // showTotal: {
-      //   type: Boolean,
-      //   default: true
-      // },
       showPageNum: {
         type: Number,
         default: 5
@@ -101,9 +97,6 @@
           }
         }
         return pages
-      },
-      pageSize () {
-        return (this.size === '' ? '' : 'pagination-' + this.size)
       }
     },
     watch: {
@@ -113,3 +106,25 @@
     }
   }
 </script>
+<style lang="scss" scoped>
+  .page {
+    width: 100%;
+    .pagination {
+      float: right;
+      li {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 2px;
+      }
+      .active {
+        background: #98e165;
+      }
+    }
+    .disabled {
+      cursor: not-allowed;
+    }
+  }
+</style>

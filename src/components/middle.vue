@@ -4,7 +4,7 @@
       <div class="search-box">
         <input type="text" v-model="keyword" @focus="handleClearVisible" @keyup.enter="searchContact">
         <i class="clear" :class="{'show-clear': clearVisible}" @click="handleClearSearch">&times;</i>
-        <button @click="searchContact">sou</button>
+        <button class="search" @click="searchContact">搜索</button>
       </div>
     </div>
     <ul class="list">
@@ -50,8 +50,8 @@
         if (this.keyword !== '') {
           this.keyword = ''
           this.$parent.handleClearSearch()
-          this.clearVisible = false
         }
+        this.clearVisible = false
       },
       handleClearVisible () {
         this.clearVisible = true
@@ -62,7 +62,7 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .middle{
     height: 100%;
     width: 250px;
@@ -87,17 +87,21 @@
         flex: 1;
       }
       button{
-        width: 30px;
+        width: 40px;
         border:none;
         outline: none;
         padding: 0;
         margin: 0;
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
       }
       .clear {
+        font-style: normal;
         display: none;
         position: absolute;
-        right: 45px;
-        top: 14px;
+        right: 55px;
+        top: 18px;
         font-size: 20px;
         background: #e7e7e7;
         width: 20px;

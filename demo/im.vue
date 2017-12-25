@@ -11,7 +11,7 @@
       return {
         lists: [],
         mine: {},
-        history: [],
+        history: {},
         sock: null
       }
     },
@@ -22,7 +22,7 @@
     },
     methods: {
       handleChange () {
-        this.history = []
+        this.history = {}
       },
       handleSend (message) {
         this.$refs.rsim.getMessage({

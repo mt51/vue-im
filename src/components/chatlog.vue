@@ -56,7 +56,7 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .chatlog {
     position: fixed;
     width: 40%;

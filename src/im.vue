@@ -1,18 +1,18 @@
 <template>  
-  <div class="wrapper">
-    <div class="rs-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
+  <div class="vueim-wrapper">
+    <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
       <LeftBar :mine="mine" v-if="!brief"></LeftBar>
       <middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief"></middle>
       <ChatBox :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message"></ChatBox>
-      <log :history="cloneHistory" v-if="historyVisible"></log>
     </div>
+    <log :history="cloneHistory" v-if="historyVisible"></log>
     <div class="mini" v-show="miniVisible" @click="handleMini">
       <img src="//cn.vuejs.org/images/logo.png">
     </div>
     <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
       <span>新消息</span>
     </div>
-    <audio :src="voiceURL" ref="voice"></audio>
+    <audio :src="voice" ref="voice"></audio>
   </div>
 </template>
 <script>
@@ -105,6 +105,7 @@
         this.$emit('send', message)
       },
       handleSearch (keyword) {
+        this.cloneLists = this.makeCloneLists()
         this.cloneLists = this.cloneLists.filter(item => {
           return item.username.indexOf(keyword) !== -1
         })
@@ -113,7 +114,7 @@
         this.cloneLists = this.makeCloneLists()
       },
       getMessage (message) {
-        this.voice()
+        this.handleVoice()
         message.mine = false
         const current = this.cloneLists.find(item => {
           return item.id === message.sender
@@ -204,7 +205,7 @@
       handlePageChange (page) {
         this.$emit('page-change', page)
       },
-      voice () {
+      handleVoice () {
         const IE = device()
         if (IE && IE < 9) return
         this.$refs.voice.play()
@@ -237,52 +238,54 @@
     }
   }
 </script>
-<style lang="scss">
-  .rs-im {
-    display: flex;
-    justify-content: space-between;
-    width: 800px;
-    height: 600px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin: -300px 0 0 -400px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
-  }
-  .brief{
-    width: 600px;
-    height: 600px;
-    margin: -300px 0 0 -300px;
-  }
-  .mini {
-    position: fixed;
-    bottom: 30px;
-    right: 40px;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    border-radius: 5px;
-    padding: 5px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
-    img {
-      width: 100%;
-      height: 100%;
+<style lang="scss" scoped>
+  .vueim-wrapper {
+    .vue-im {
+      display: flex;
+      justify-content: space-between;
+      width: 800px;
+      height: 600px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin: -300px 0 0 -400px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
     }
-  }
-  .newmsg {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    margin-left: -30px;
-    animation: twinkle 2s ease infinite;
-    width: 60px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
-    border: 1px solid #000;
-    z-index: 100;
-    cursor: pointer;
+    .brief{
+      width: 600px;
+      height: 600px;
+      margin: -300px 0 0 -300px;
+    }
+    .mini {
+      position: fixed;
+      bottom: 30px;
+      right: 40px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 5px;
+      padding: 5px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .newmsg {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      margin-left: -30px;
+      animation: twinkle 2s ease infinite;
+      width: 60px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+      border: 1px solid #000;
+      z-index: 100;
+      cursor: pointer;
+    }
   }
   @keyframes twinkle {
     0% {opacity: 1}
