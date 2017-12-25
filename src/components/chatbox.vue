@@ -18,8 +18,10 @@
     </div>
     <div class="chat-input" v-if="currentChat" :class="{'focus': focusClass}">
       <Emoji v-show="emojiVisible"></Emoji>
+      <input type="file" name="image" class="image-file" ref="file" @change="handleFileChange">
       <div class="tool-bar">
         <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
+        <span class="tool-bar-item fa fa-file-image-o" v-if="imageUpload" @click="handleOpenUpload(null)"></span>
         <span class="tool-bar-item history" @click="handleHistoryVisible">历史记录</span>
       </div>
       <div class="input-box">
@@ -35,6 +37,7 @@
   import localData from '@/util/data.js'
   import { deepCopy } from '@/util/utils.js'
   import { formatDate } from '@/filters/filters'
+  import ajax from '@/util/ajax'
   import drag from '@/directives/drag'
   import Emoji from './emoji'
 
@@ -43,7 +46,11 @@
       currentChat: Object,
       mine: Object,
       message: Object,
-      lists: Array
+      lists: Array,
+      url: String,
+      type: String,
+      ext: Array,
+      imageUpload: Boolean
     },
     data () {
       return {
@@ -148,6 +155,31 @@
       },
       handleEmojiVisible (status) {
         this.emojiVisible = status === null ? !this.emojiVisible : status
+      },
+      handleOpenUpload () {
+        this.$refs.file.click()
+      },
+      handleFileChange (e) {
+        const file = e.target.files[0]
+        const name = e.target.name
+        const temp = file.name.split('.')
+        const ext = temp[temp.length - 1]
+        if (this.ext.length > 0 && this.ext.indexOf(ext) === -1) {
+          alert('文件格式不支持')
+          return
+        }
+        ajax({
+          filename: name,
+          file,
+          url: this.url,
+          type: this.type,
+          onSuccess (response) {
+            console.log(response)
+          },
+          onError (err) {
+            console.log(err)
+          }
+        })
       }
     },
     mounted () {
@@ -280,8 +312,10 @@
       .tool-bar {
         height: 40px;
         line-height: 40px;
-        .tool-bar-item:hover {
+        .tool-bar-item {
+          margin-right: 5px;
           cursor: pointer;
+          color: #777;
           &:hover{
             color: #129611;
           }
@@ -343,6 +377,12 @@
     }
     .emoji-item {
       margin: 2px 5px 0 5px;
+    }
+    .image-file {
+      position: absolute;
+      top: 0;
+      opacity: 0;
+      z-index: -1;
     }
   }
   .focus {

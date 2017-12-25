@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" :notice="true" ref="rsim"></vue-im>
+    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="rsim"></vue-im>
   </div>
 </template>
 <script>

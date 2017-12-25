@@ -3,7 +3,7 @@
     <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
       <LeftBar :mine="mine" v-if="!brief"></LeftBar>
       <middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief"></middle>
-      <ChatBox :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message"></ChatBox>
+      <ChatBox :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type"></ChatBox>
     </div>
     <log :history="cloneHistory" v-if="historyVisible"></log>
     <div class="mini" v-show="miniVisible" @click="handleMini">
@@ -54,6 +54,21 @@
       voice: {
         type: String,
         default: 'static/voice/default.mp3'
+      },
+      imageUpload: {
+        type: Boolean,
+        default: false
+      },
+      ext: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      url: String,
+      type: {
+        type: String,
+        default: 'POST'
       }
     },
     data () {
@@ -235,6 +250,9 @@
         history: data ? data.history : {}
       }
       localData.saveData(this.mine.id, tempData)
+      if (this.imageUpload && this.url === undefined) {
+        throw new Error('props url is required')
+      }
     }
   }
 </script>

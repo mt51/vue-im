@@ -4,7 +4,7 @@
       <div class="search-box">
         <input type="text" v-model="keyword" @focus="handleClearVisible" @keyup.enter="searchContact">
         <i class="clear" :class="{'show-clear': clearVisible}" @click="handleClearSearch">&times;</i>
-        <button class="search" @click="searchContact">搜索</button>
+        <button class="search fa fa-search" @click="searchContact"></button>
       </div>
     </div>
     <ul class="list">
