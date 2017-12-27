@@ -14,9 +14,11 @@
         </div>
         <div class="user">
           <div class="username">{{item.username}}</div>
-          <div class="message">{{item.chatlog}}</div>
-          <div class="newmsg-bubble" v-show="item.count">{{item.count}}</div>
+          <div class="message" v-if="item.chatlogType === 'text'">{{item.chatlog}}</div>
+          <div class="message" v-else-if="item.chatlogType === 'emoji'" v-html="item.chatlog"></div>
+          <div class="message" v-else-if="item.chatlogType === 'image'">图片</div>
         </div>
+        <div class="newmsg-bubble" v-show="item.count">{{item.count}}</div>
         <div class="time">{{item.time | formatDate}}</div>
       </li>
     </ul>
@@ -159,19 +161,19 @@
           color: #afa0a8;
           font-size: 12px;
         }
-        .newmsg-bubble {
-          position: absolute;
-          right: 0;
-          bottom: -2px;
-          width: 20px;
-          height: 20px;
-          line-height: 20px;
-          border-radius: 20px;
-          color: #fff;
-          background: #ff3b30;
-          font-size: 12px;
-          text-align: center;
-        }
+      }
+      .newmsg-bubble {
+        position: absolute;
+        right: 20px;
+        bottom: 7px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        border-radius: 20px;
+        color: #fff;
+        background: #ff3b30;
+        font-size: 12px;
+        text-align: center;
       }
       .time{
         position: absolute;

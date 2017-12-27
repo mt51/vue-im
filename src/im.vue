@@ -1,5 +1,6 @@
 <template>  
   <div class="vueim-wrapper">
+    <Alert></Alert>
     <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
       <LeftBar :mine="mine" v-if="!brief"></LeftBar>
       <middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief"></middle>
@@ -19,6 +20,7 @@
   import LeftBar from '@/components/leftbar.vue'
   import middle from '@/components/middle.vue'
   import ChatBox from '@/components/chatbox.vue'
+  import Alert from '@/components/message.vue'
   import log from '@/components/chatlog.vue'
   import { deepCopy, device } from '@/util/utils'
   import localData from '@/util/data.js'
@@ -96,6 +98,7 @@
           const tempLog = data.history[item.id]
           if (tempLog && tempLog.length > 0) {
             item.chatlog = tempLog[tempLog.length - 1].content
+            item.chatlogType = tempLog[tempLog.length - 1].type
             item.time = tempLog[tempLog.length - 1].time
           } else {
             item.chatlog = ''
@@ -115,6 +118,7 @@
       handleChatChange (item) {
         this.currentChat = item
         this.$emit('chat-change', item)
+        this.currentChat.count = 0
       },
       emitSend (message) {
         this.$emit('send', message)
@@ -230,7 +234,8 @@
       LeftBar,
       middle,
       ChatBox,
-      log
+      log,
+      Alert
     },
     watch: {
       lists: {
