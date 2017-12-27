@@ -11,14 +11,14 @@
           <div class="avatar">
             <img :src="item.avatar">
           </div>
-          <div class="chats" v-html="item.content" v-if="item.type === 'emoji'"></div>
-          <div class="chats" v-else>{{item.content}}</div>
+          <div class="chats" v-if="item.type === 'text'">{{item.content}}</div>
+          <div class="chats" :class="{'chats-image': item.type === 'image'}" @click="handlePrevImage" v-html="item.content" v-else></div>
         </li>
       </ul>
     </div>
     <div class="chat-input" v-if="currentChat" :class="{'focus': focusClass}">
       <Emoji v-show="emojiVisible"></Emoji>
-      <input type="file" name="image" class="image-file" ref="file" @change="handleFileChange">
+      <form ref="uploadForm"><input type="file" name="image" class="image-file" ref="file" @change="handleFileChange"></form>
       <div class="tool-bar">
         <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
         <span class="tool-bar-item fa fa-file-image-o" v-if="imageUpload" @click="handleOpenUpload(null)"></span>
@@ -30,6 +30,9 @@
       <div class="send">
         <button class="send-btn" @click="handleSend">发送</button>
       </div>
+    </div>
+    <div class="image-prev" v-show="prevVisible && currentImage" @click="handleClosePrev">
+      <img :src="currentImage" @click="handleClosePrev">
     </div>
   </div>
 </template>
@@ -60,7 +63,9 @@
         localData: [],
         cloneLists: deepCopy(this.lists),
         target: null,
-        emojiVisible: false
+        emojiVisible: false,
+        currentImage: '',
+        prevVisible: false
       }
     },
     created () {
@@ -93,7 +98,8 @@
           recver: this.currentChat.id,
           time: new Date().getTime(),
           sendername: this.mine.username,
-          recvername: this.currentChat.username
+          recvername: this.currentChat.username,
+          type: 'text'
         }
         this.records.push(sendData)
         this.saveRecord(sendData)
@@ -165,21 +171,66 @@
         const temp = file.name.split('.')
         const ext = temp[temp.length - 1]
         if (this.ext.length > 0 && this.ext.indexOf(ext) === -1) {
-          alert('文件格式不支持')
+          this.$message({
+            messsage: '文件格式不支持',
+            type: 'warning'
+          })
           return
         }
+        this.$refs.uploadForm.reset()
+        this.upload(name, file)
+      },
+      upload (name, file) {
         ajax({
           filename: name,
           file,
           url: this.url,
           type: this.type,
           onSuccess (response) {
-            console.log(response)
+            if (response && response.src) {
+              this.handleSendImage('//ofl49b399.bkt.clouddn.com/1.jpg')
+            } else {
+              this.$message({
+                message: '发送失败',
+                type: 'danger'
+              })
+            }
           },
           onError (err) {
-            console.log(err)
+            this.$message({
+              message: err.msg,
+              type: 'danger'
+            })
           }
         })
+      },
+      handleSendImage (src) {
+        this.$refs.textarea.focus()
+        const sendData = {
+          content: '<img style="max-width: 100%;" src="' + src + '"></img>',
+          mine: true,
+          avatar: this.mine.avatar,
+          sender: this.mine.id,
+          recver: this.currentChat.id,
+          time: new Date().getTime(),
+          sendername: this.mine.username,
+          recvername: this.currentChat.username,
+          type: 'image'
+        }
+        this.records.push(sendData)
+        this.saveRecord(sendData)
+        this.handleScroll()
+        this.sendMessage = ''
+        this.$parent.emitSend(sendData)
+        this.$parent.updateCloneListsChatlogById(this.currentChat.id)
+      },
+      handlePrevImage (e) {
+        this.prevVisible = true
+        this.currentImage = e.target.src
+      },
+      handleClosePrev () {
+        this.prevVisible = false
+        this.currentImage = ''
       }
     },
     mounted () {
@@ -283,21 +334,26 @@
       .chats{
         display: inline-block;
         margin: 4px 15px;
-        padding: 0 10px;
-        height: 30px;
-        line-height: 30px;
+        padding: 5px 10px;
+        line-height: 1.5;
         font-size: 14px;
         background: #fff;
+      }
+      .chats-image {
+        height: auto;
+        padding: 10px;
+        width: 79%;
+        cursor: pointer;
       }
       .mine {
         overflow: hidden;
         padding-right: 10px;
         text-align: right;
-        .avatar{
-          float: right;
-        }
         .chats {
           background: #98e165;
+        }
+        .avatar{
+          float: right;
         }
       }
     }
@@ -383,6 +439,22 @@
       top: 0;
       opacity: 0;
       z-index: -1;
+    }
+    .image-prev {
+      cursor: pointer;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      z-index: 1000;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      img {
+        max-width: 80%;
+      }
     }
   }
   .focus {
