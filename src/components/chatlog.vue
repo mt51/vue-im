@@ -10,7 +10,7 @@
       </div>
       <ul class="log-list">
         <li class="log-item" v-for="(item, index) in history.records" :class="{'mine': item.mine}">
-          <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
+          <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate(true) }}</span></div>
           <div class="avatar">
             <img :src="item.avatar">
           </div>
@@ -141,7 +141,7 @@
       width: 100%;
       background: #f5f5f5;
       bottom: 0;
-      height: 40px;
+      height: 33px;
       .rs-pagination{
         text-align: right;
       }
