@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="rsim"></vue-im>
+    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="vueim"></vue-im>
   </div>
 </template>
 <script>
@@ -25,7 +25,7 @@
         this.history = {}
       },
       handleSend (message) {
-        this.$refs.rsim.getMessage({
+        this.$refs.vueim.getMessage({
           content: '你好呀',
           avatar: this.lists[0].avatar,
           sender: this.lists[0].id,

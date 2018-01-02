@@ -68,9 +68,29 @@ export default {
     }
   ],
   'log': {
-    total: 20,
-    size: 40,
+    total: 21,
+    size: 20,
     records: [
+      {
+        content: '你好',
+        'username': '贤心',
+        'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg',
+        sender: '100001',
+        recver: '100000',
+        time: 1513215782417,
+        sendername: '贤心',
+        recvername: '纸飞机'
+      },
+      {
+        content: '你好',
+        'username': '贤心',
+        'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg',
+        sender: '100001',
+        recver: '100000',
+        time: 1513215782417,
+        sendername: '贤心',
+        recvername: '纸飞机'
+      },
       {
         content: '你好',
         'username': '贤心',
