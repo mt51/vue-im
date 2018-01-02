@@ -1,6 +1,6 @@
 {
   "name": "vue-im",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "基于vue的即时通讯组件",
   "author": "liuziyang",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "git+https://github.com/lzy1043/vue-im.git"
   },
-  "main": "dist/rsui.min.js",
+  "main": "dist/vue-im.js",
   "dependencies": {
     "moment": "^2.19.3"
   },

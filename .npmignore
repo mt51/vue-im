@@ -1,8 +1,10 @@
 build/
 config/
 demo/
+test/
 index.html
 src/
+static/
 .babelrc
 .gitignore
 .eslintrc.js

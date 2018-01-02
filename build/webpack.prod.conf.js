@@ -23,7 +23,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {
     path: path.resolve(__dirname, '../dist/'),
-    publicPath: '/dist/',
+    publicPath: '/',
     filename: 'vue-im.js',
     library: 'vueim',
     libraryTarget: 'umd',
@@ -72,11 +72,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         removeComments: true,
         collapseWhitespace: true,
         removeAttributeQuotes: true
-        // more options:
-        // https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
+      }
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
