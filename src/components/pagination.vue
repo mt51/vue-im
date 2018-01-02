@@ -2,25 +2,17 @@
   <div class="page">
     <ul class="pagination">
       <li title="首页" @click="updateCurrentPage(1)" :class="{'disabled':currentPage === 1}">
-        <a href="javascript:void(0)" class="previous">
-          <span>&laquo;</span>
-        </a>
+        <span>&laquo;</span>
       </li>
       <li title="上一页" @click="prevPage" :class="{'disabled':currentPage === 1}">
-        <a href="javascript:void(0)" class="previous">
-          <span>&lt;</span>
-        </a>
+        <span>&lt;</span>
       </li>
-      <li v-for="item in page" :class="{'active': currentPage === item}" @click="updateCurrentPage(item)"><a href="javascript:void(0)">{{item}}</a></li>
+      <li v-for="item in page" class="page-item" :class="{'active': currentPage === item}" @click="updateCurrentPage(item)"><span>{{item}}</span></li>
       <li title="下一页" @click="nextPage" :class="{'disabled':currentPage === totalPage}">
-        <a href="javascript:void(0)" class="next">
-          <span>&gt;</span>
-        </a>
+        <span>&gt;</span>
       </li>
       <li title="尾页" @click="updateCurrentPage(totalPage)" :class="{'disabled':currentPage === totalPage}">
-        <a href="javascript:void(0)" class="next">
-          <span>&raquo;</span>
-        </a>
+        <span>&raquo;</span>
       </li>
     </ul>
   </div>
@@ -111,20 +103,31 @@
     width: 100%;
     .pagination {
       float: right;
+      font-size: 0;
+      border: 1px solid #ccc;
+      margin: 0;
+      padding: 0;
       li {
+        cursor: pointer;
+        font-size: 14px;
         display: inline-block;
         width: 30px;
         height: 30px;
         line-height: 30px;
         text-align: center;
         border-radius: 2px;
+        border-right: 1px solid #ccc;
+        &:last-child {
+          border-right: none;
+        }
       }
       .active {
-        background: #98e165;
+        background: #337ab7;
+        color: #fff;
       }
     }
     .disabled {
-      cursor: not-allowed;
+      cursor: not-allowed!important;
     }
   }
 </style>
