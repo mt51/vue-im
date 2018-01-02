@@ -8,7 +8,7 @@
     </div>
     <log :history="cloneHistory" v-if="historyVisible"></log>
     <div class="mini" v-show="miniVisible" @click="handleMini">
-      <img src="//cn.vuejs.org/images/logo.png">
+      <img :src="miniicon">
     </div>
     <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
       <span>新消息</span>
@@ -47,6 +47,10 @@
       mini: {
         type: Boolean,
         default: false
+      },
+      miniicon: {
+        type: String,
+        default: '//cn.vuejs.org/images/logo.png'
       },
       notice: Boolean,
       brief: {
@@ -90,6 +94,7 @@
         return localData.readData('currentChat')
       },
       makeCloneLists () {
+        if (!this.mine) return
         const data = localData.readData(this.mine.id)
         let cloneLists = deepCopy(this.lists)
         if (!data) return cloneLists
@@ -247,6 +252,7 @@
       }
     },
     created () {
+      if (!this.mine) throw new Error('Missing required prop: "mine"')
       const data = localData.readData(this.mine.id)
       const tempData = {
         avatar: this.mine.avatar,
