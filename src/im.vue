@@ -90,7 +90,11 @@
     },
     methods: {
       makeCurrentChat () {
-        return localData.readData('currentChat')
+        const currentChat = localData.readData('currentChat')
+        if (currentChat) {
+          this.$emit('on-chat-change', currentChat)
+        }
+        return currentChat
       },
       makeCloneLists () {
         if (!this.mine) return
