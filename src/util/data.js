@@ -1,5 +1,5 @@
 const saveData = function (key, data) {
-  let localData = window.localStorage.getItem('rsIM')
+  let localData = window.localStorage.getItem('VueIM')
   if (!localData) {
     localData = {
       [key]: data
@@ -8,11 +8,11 @@ const saveData = function (key, data) {
     localData = JSON.parse(localData)
     localData[key] = data
   }
-  window.localStorage.setItem('rsIM', JSON.stringify(localData))
+  window.localStorage.setItem('VueIM', JSON.stringify(localData))
 }
 
 const readData = function (key) {
-  const localData = window.localStorage.getItem('rsIM')
+  const localData = window.localStorage.getItem('VueIM')
   return localData ? JSON.parse(localData)[key] : localData
 }
 
