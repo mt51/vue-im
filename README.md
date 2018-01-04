@@ -45,7 +45,7 @@ $ npm install vue-im --save
 
 ##### 1. 当前用户
 
-``` json
+``` js
     
     {
         'username': '会飞的猪',
@@ -55,7 +55,7 @@ $ npm install vue-im --save
 
 ```
 ##### 2. 联系人数组
-``` json
+``` js
     [
         {
             'username': '会飞的猪',
@@ -73,7 +73,7 @@ $ npm install vue-im --save
 
 ##### 3.  聊天记录
 
-``` json
+``` js
 
 {
     total: 21,  //总条数
@@ -105,7 +105,7 @@ $ npm install vue-im --save
 ```
 
 ##### 4. 新消息
-``` json
+``` js
     {
       content: '你好呀',  // 消息内容
       avatar: this.lists[0].avatar, // 发送者头像
