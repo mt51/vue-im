@@ -13,7 +13,7 @@
     <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
       <span>新消息</span>
     </div>
-    <audio :src="voice" ref="voice"></audio>
+    <audio v-if="voice" :src="voice" ref="voice"></audio>
   </div>
 </template>
 <script>
@@ -58,8 +58,7 @@
         default: false
       },
       voice: {
-        type: String,
-        default: 'static/voice/default.mp3'
+        type: String
       },
       imageUpload: {
         type: Boolean,
@@ -122,11 +121,11 @@
       },
       handleChatChange (item) {
         this.currentChat = item
-        this.$emit('chat-change', item)
+        this.$emit('on-chat-change', item)
         this.currentChat.count = 0
       },
       emitSend (message) {
-        this.$emit('send', message)
+        this.$emit('on-send', message)
       },
       handleSearch (keyword) {
         this.cloneLists = this.makeCloneLists()
@@ -223,13 +222,17 @@
         messageLists[message.sender].push(message)
         return messageLists
       },
-      handleHistoryVisible (status) {
+      handleHistoryVisible () {
         this.historyVisible = !this.historyVisible
+        if (status) {
+          this.$emit('on-view-history', this.currentChat)
+        }
       },
       handlePageChange (page) {
-        this.$emit('page-change', page)
+        this.$emit('on-page-change', page)
       },
       handleVoice () {
+        if (!this.voice) return
         const IE = device()
         if (IE && IE < 9) return
         this.$refs.voice.play()
