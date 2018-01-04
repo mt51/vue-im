@@ -34,11 +34,17 @@
   display: inline-block;
   width: 26px;
   height: 26px;
-  background-size: 100%!important;
-  margin: 5px;
+  background-size: 30px!important;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 5px;
   cursor: pointer;
+  &:hover {
+    background-color: #c5c5c5;
+    border-radius: 5px;
+  }
 }
 @for $i from 0 through 55 {
-  .emoji#{$i} { background: url(/static/emoji/#{$i}.png) }
+  .emoji#{$i} { background-image: url(./emoji/#{$i}.png) }
 }
 </style>
