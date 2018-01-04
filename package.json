@@ -22,7 +22,6 @@
     "moment": "^2.19.3"
   },
   "devDependencies": {
-    "sockjs-client": "^1.1.4",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
