@@ -92,6 +92,10 @@
       },
       handleSend () {
         this.$refs.textarea.focus()
+        if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
+          this.$message('消息内容不能为空')
+          return
+        }
         const sendData = {
           content: this.sendMessage,
           mine: true,
