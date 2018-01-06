@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="vueim"></vue-im>
+    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="vueim" brief :chat-with="currentChat"></vue-im>
   </div>
 </template>
 <script>
@@ -12,13 +12,19 @@
         lists: [],
         mine: {},
         history: {},
-        sock: null
+        sock: null,
+        currentChat: {}
       }
     },
     created () {
       this.lists = lists.list
       this.mine = lists.mine
       this.history = lists.log
+      this.currentChat = {
+        'username': '贤心',
+        'id': '100001',
+        'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg'
+      }
     },
     methods: {
       handleChange () {

@@ -1,6 +1,7 @@
 <template>
   <div class="chat-box">
     <div class="chat-box-head" v-if="currentChat" v-drag="target">
+      <img class="brief-avater" :src="currentChat.avatar">
       <span class="username">{{currentChat.username}}</span>
       <span class="mini-mark" @click="handleMini">-</span>
     </div>
@@ -53,7 +54,8 @@
       url: String,
       type: String,
       ext: Array,
-      imageUpload: Boolean
+      imageUpload: Boolean,
+      brief: Boolean
     },
     data () {
       return {
@@ -293,6 +295,17 @@
       font-size: 20px;
       border-bottom: 1px solid #e7e7e7;
       cursor: move;
+    }
+    .brief-avater {
+      display: inline-block;
+      width: 45px;
+      height: 45px;
+      border-radius: 5px;
+      vertical-align: middle;
+    }
+    .username {
+      display: inline-block;
+      vertical-align: middle;
     }
     .mini-mark {
       float: right;

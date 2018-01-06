@@ -4,7 +4,7 @@
     <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
       <LeftBar :mine="mine" v-if="!brief"></LeftBar>
       <middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief"></middle>
-      <ChatBox :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type"></ChatBox>
+      <ChatBox :brief="brief" :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type"></ChatBox>
     </div>
     <log :history="cloneHistory" v-if="historyVisible"></log>
     <div class="mini" v-show="miniVisible" @click="handleMini">
@@ -57,6 +57,10 @@
         type: Boolean,
         default: false
       },
+      chatWith: {
+        type: Object,
+        default: null
+      },
       voice: {
         type: String
       },
@@ -90,6 +94,9 @@
     },
     methods: {
       makeCurrentChat () {
+        if (this.brief && this.chatWith) {
+          return this.chatWith
+        }
         const currentChat = localData.readData('currentChat')
         if (currentChat) {
           this.$emit('on-chat-change', currentChat)
@@ -259,6 +266,9 @@
       }
     },
     created () {
+      if (this.brief && !this.chatWith) {
+        throw new Error('props chatWith is required when brief is true')
+      }
       if (!this.mine) throw new Error('Missing required prop: "mine"')
       const data = localData.readData(this.mine.id)
       const tempData = {
