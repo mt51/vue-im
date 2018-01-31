@@ -118,6 +118,18 @@ $ npm install vue-im --save
 
 ```
 
+##### 5.发送图片
+
+发送图片后台接口的返回值格式： 
+
+``` js
+    {
+        //图片路径
+      src: ‘’
+    }
+
+```
+
 ### 2. 分页控制
 
 监听 ` on-page-change ` 事件能够获取当前点击的页数，根据页数修改 history.records 会自动触发更新
@@ -169,6 +181,7 @@ html
 | ext | Array |    []     |  配置图片发送支持的格式  |
 | url | String |    ——     |  图片上传的后台地址，启用图片发送功能时该项为必填  |
 | type | String |    POST     |  图片上传的方式  |
+| upload-name | String |    image     |  图片上传的表单的name属性  |
 
 
 
