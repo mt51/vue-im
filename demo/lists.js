@@ -1,15 +1,15 @@
 export default {
   'mine':
   {
-    'username': '纸飞机',
+    'username': '会飞的猪',
     'id': '100000',
     'avatar': '//ofl49b399.bkt.clouddn.com/1.jpg'
   },
   'list': [
     {
-      'username': '贤心',
+      'username': '奔跑的五花肉',
       'id': '100001',
-      'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg'
+      'avatar': '//ofl49b399.bkt.clouddn.com/2.jpg'
     },
     {
       'username': '刘涛tamia',

@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @send="handleSend" imageUpload url="123" :notice="true" ref="vueim" brief :chat-with="currentChat"></vue-im>
-  </div>
+  <vue-im @page-change="pageChange" :lists="lists" :mine="mine" :history="history" @chat-change="handleChange" @on-send="handleSend" imageUpload url="http://localhost:3000/upload"  :notice="true" ref="vueim"></vue-im>
 </template>
 <script>
   import lists from './lists.js'
@@ -31,15 +29,21 @@
         this.history = {}
       },
       handleSend (message) {
-        this.$refs.vueim.getMessage({
-          content: '你好呀',
-          avatar: this.lists[0].avatar,
-          sender: this.lists[0].id,
-          recver: this.mine.id,
-          time: new Date().getTime(),
-          sendername: this.lists[0].username,
-          recvername: this.mine.username
-        })
+        // let avatar
+        // this.lists.forEach(function (item) {
+        //   if (item.id === message.recver) {
+        //     avatar = item.avatar
+        //   }
+        // })
+        // this.$refs.vueim.getMessage({
+        //   content: `你好呀,我是${message.recvername}`,
+        //   avatar: avatar,
+        //   sender: message.recver,
+        //   recver: this.mine.id,
+        //   time: new Date().getTime(),
+        //   sendername: message.recvername,
+        //   recvername: this.mine.username
+        // })
       },
       pageChange (page) {
         console.log(page)
