@@ -10,11 +10,13 @@ export default function ajax (options) {
   xhr.send(formData)
 
   xhr.onreadystatechange = function (e) {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      const data = JSON.parse(xhr.responseText)
-      options.onSuccess(data)
-    } else {
-      options.onError(xhr.status)
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText)
+        options.onSuccess(data)
+      } else {
+        options.onError(xhr)
+      }
     }
   }
 }
