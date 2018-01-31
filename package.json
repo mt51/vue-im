@@ -19,6 +19,8 @@
   },
   "main": "dist/vue-im.js",
   "dependencies": {
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4",
     "moment": "^2.19.3"
   },
   "devDependencies": {
@@ -83,6 +85,7 @@
     "sinon": "^2.1.0",
     "sinon-chai": "^2.8.0",
     "url-loader": "^0.5.8",
+    "vue": "^2.5.13",
     "vue-loader": "^12.1.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.3",
