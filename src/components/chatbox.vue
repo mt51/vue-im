@@ -1,36 +1,40 @@
 <template>
   <div class="chat-box">
     <div class="chat-box-head" v-if="currentChat" v-drag="target">
-      <img class="brief-avater" :src="currentChat.avatar">
       <span class="username">{{currentChat.username}}</span>
       <span class="mini-mark" @click="handleMini">-</span>
     </div>
-    <div class="main-chat" ref="chat-main" v-if="currentChat">
-      <ul class="chat-list" ref="chat-list">
-        <li class="chat-item clearfix" v-for="(item, index) in records" :class="{'mine': item.mine}">
-          <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
-          <div class="avatar">
-            <img :src="item.avatar">
+    <div class="main-chat-wrap">
+      <div class="main-chat-container">
+        <div class="main-chat" ref="chat-main" v-if="currentChat">
+          <ul class="chat-list" ref="chat-list">
+            <li class="chat-item clearfix" v-for="(item, index) in records" :class="{'mine': item.mine}">
+              <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
+              <div class="avatar">
+                <img :src="item.avatar">
+              </div>
+              <div class="chats" v-if="item.type === 'text'" v-html="item.content"></div>
+              <div class="chats" :class="{'chats-image': item.type === 'image'}" @click="handlePrevImage" v-html="item.content" v-else></div>
+            </li>
+          </ul>
+        </div>
+        <div class="chat-input" v-if="currentChat" :class="{'focus': focusClass}">
+          <Emoji v-show="emojiVisible"></Emoji>
+          <form ref="uploadForm"><input type="file" :name="uploadName" class="image-file" ref="file" @change="handleFileChange"></form>
+          <div class="tool-bar">
+            <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
+            <span class="tool-bar-item fa fa-file-image-o" v-if="imageUpload" @click="handleOpenUpload(null)"></span>
+            <span class="tool-bar-item history" @click="handleHistoryVisible">历史记录</span>
           </div>
-          <div class="chats" v-if="item.type === 'text'">{{item.content}}</div>
-          <div class="chats" :class="{'chats-image': item.type === 'image'}" @click="handlePrevImage" v-html="item.content" v-else></div>
-        </li>
-      </ul>
-    </div>
-    <div class="chat-input" v-if="currentChat" :class="{'focus': focusClass}">
-      <Emoji v-show="emojiVisible"></Emoji>
-      <form ref="uploadForm"><input type="file" name="image" class="image-file" ref="file" @change="handleFileChange"></form>
-      <div class="tool-bar">
-        <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
-        <span class="tool-bar-item fa fa-file-image-o" v-if="imageUpload" @click="handleOpenUpload(null)"></span>
-        <span class="tool-bar-item history" @click="handleHistoryVisible">历史记录</span>
+          <div class="input-box">
+            <textarea id="textarea" @focus="handleFocus" @blur="handleBlur" @keydown.enter="handleKeydown" @keyup.enter="handleSend" ref="textarea" v-model="sendMessage"></textarea>
+          </div>
+          <div class="send">
+            <button class="send-btn" @click="handleSend">发送</button>
+          </div>
+        </div>
       </div>
-      <div class="input-box">
-        <textarea id="textarea" @focus="handleFocus" @blur="handleBlur" @keyup.enter="handleSend" ref="textarea" v-model="sendMessage"></textarea>
-      </div>
-      <div class="send">
-        <button class="send-btn" @click="handleSend">发送</button>
-      </div>
+      <ChatLog :history="cloneHistory" v-model="historyVisible" />
     </div>
     <div class="image-prev" v-show="prevVisible && currentImage" @click="handleClosePrev">
       <img :src="currentImage" @click="handleClosePrev">
@@ -44,6 +48,7 @@
   import ajax from '@/util/ajax'
   import drag from '@/directives/drag'
   import Emoji from './emoji'
+  import ChatLog from './chatlog'
 
   export default {
     props: {
@@ -54,8 +59,9 @@
       url: String,
       type: String,
       ext: Array,
+      uploadName: String,
       imageUpload: Boolean,
-      brief: Boolean
+      history: Object
     },
     data () {
       return {
@@ -67,7 +73,9 @@
         target: null,
         emojiVisible: false,
         currentImage: '',
-        prevVisible: false
+        prevVisible: false,
+        cloneHistory: this.makeCloneHistory(),
+        historyVisible: false
       }
     },
     created () {
@@ -83,6 +91,14 @@
         const history = localData.readData(this.mine.id).history
         return history[this.currentChat.id] ? history[this.currentChat.id] : []
       },
+      makeCloneHistory () {
+        let history = deepCopy(this.history)
+        if (!history.records) return
+        history.records.forEach(item => {
+          item.mine = item.sender === this.mine.id
+        })
+        return history
+      },
       handleFocus () {
         this.focusClass = true
         this.emojiVisible = false
@@ -90,7 +106,20 @@
       handleBlur () {
         this.focusClass = false
       },
-      handleSend () {
+      handleKeydown (e) {
+        e = e || window.event
+        if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
+          this.$message({
+            message: '消息内容不能为空',
+            type: 'warning'
+          })
+          e.preventDefault()
+        }
+      },
+      handleSend (e) {
+        if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
+          return false
+        }
         this.$refs.textarea.focus()
         if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
           this.$message('消息内容不能为空')
@@ -142,9 +171,6 @@
         data.history[this.currentChat.id] = records
         localData.saveData(this.mine.id, data)
       },
-      handleHistoryVisible () {
-        this.$parent.handleHistoryVisible()
-      },
       handleSendEmoji (index) {
         this.$refs.textarea.focus()
         const sendData = {
@@ -187,6 +213,7 @@
         this.upload(name, file)
       },
       upload (name, file) {
+        const self = this
         ajax({
           filename: name,
           file,
@@ -194,17 +221,21 @@
           type: this.type,
           onSuccess (response) {
             if (response && response.src) {
-              this.handleSendImage('//ofl49b399.bkt.clouddn.com/1.jpg')
+              self.handleSendImage(response.src)
+              self.$message({
+                message: '已发送',
+                type: 'success'
+              })
             } else {
-              this.$message({
+              self.$message({
                 message: '发送失败',
                 type: 'danger'
               })
             }
           },
           onError (err) {
-            this.$message({
-              message: err.msg,
+            self.$message({
+              message: err.statusText || '发送失败',
               type: 'danger'
             })
           }
@@ -237,6 +268,10 @@
       handleClosePrev () {
         this.prevVisible = false
         this.currentImage = ''
+      },
+      handleHistoryVisible () {
+        this.historyVisible = true
+        this.$emit('on-view-history', this.currentChat)
       }
     },
     mounted () {
@@ -271,7 +306,8 @@
       drag
     },
     components: {
-      Emoji
+      Emoji,
+      ChatLog
     }
   }
 </script>
@@ -285,12 +321,11 @@
   }
   .chat-box{
     flex: 1;
-    height: 100%;
-    background: #f5f5f5;
+    background: #fff;
     min-width: 400px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
     border-right: 1px solid #e7e7e7;
     .chat-box-head{
       height: 60px;
@@ -298,7 +333,6 @@
       padding:0 20px;
       font-size: 20px;
       border-bottom: 1px solid #e7e7e7;
-      cursor: move;
     }
     .brief-avater {
       display: inline-block;
@@ -354,7 +388,10 @@
         padding: 5px 10px;
         line-height: 1.5;
         font-size: 14px;
-        background: #fff;
+        background: #e8e8e8;
+        min-width: 30px;
+        text-align: center;
+        border-radius: 15px;
       }
       .chats-image {
         height: auto;
@@ -367,7 +404,7 @@
         padding-right: 10px;
         text-align: right;
         .chats {
-          background: #98e165;
+          background: #d8e8f9;
         }
         .avatar{
           float: right;
@@ -390,7 +427,7 @@
           cursor: pointer;
           color: #777;
           &:hover{
-            color: #129611;
+            color: #e45050;
           }
         }
       }
@@ -406,12 +443,12 @@
         flex: 1;
         textarea {
           width: 100%;
-          height: 74px;
+          height: 95px;
           line-height: 1.4;
           resize: none;
           border: none;
           outline: none;
-          background: #f5f5f5;
+          background: #fff;
           overflow: auto;
           &:focus {
             background: #fff;
@@ -425,17 +462,13 @@
       .send-btn {
         line-height: 26px;
         width: 60px;
-        background: #f5f5f5;
-        color: #606060;
+        background: #e45050;
+        color: #fff;
         border: 1px solid #e7e7e7;
         font-size: 14px;
         border-radius: 3px;
         margin-right: 10px;
-        &:hover {
-          background: #129611;
-          color: #fff;
-          border-color: #129611;
-        }
+        cursor: pointer;
       }
     }
     .time {
@@ -443,9 +476,9 @@
       span {
         display: inline-block;
         padding: 3px 8px;
-        background: #e6e6e6;
-        color: #000;
+        color: #999;
         border-radius: 3px;
+        font-size: 14px;
       }
     }
     .emoji-item {
@@ -476,5 +509,13 @@
   }
   .focus {
     background: #fff;
+  }
+  .main-chat-wrap {
+    display: flex;
+    justify-content: space-between;
+    height: 539px;
+  }
+  .main-chat-container {
+    flex: 1;
   }
 </style>

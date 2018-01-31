@@ -11,7 +11,9 @@ const Message = function (options) {
       message: options
     }
   }
-  Instance = new MessageConstructor(options)
+  Instance = new MessageConstructor({
+    data: options
+  })
   Instance.vm = Instance.$mount()
   Instance.vm.visible = true
   document.body.appendChild(Instance.vm.$el)

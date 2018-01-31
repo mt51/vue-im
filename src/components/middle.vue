@@ -2,9 +2,8 @@
   <div class="middle">
     <div class="top-search">
       <div class="search-box">
-        <input type="text" v-model="keyword" @focus="handleClearVisible" @keyup.enter="searchContact">
-        <i class="clear" :class="{'show-clear': clearVisible}" @click="handleClearSearch">&times;</i>
-        <button class="search fa fa-search" @click="searchContact"></button>
+        <button class="search fa fa-search"></button>
+        <input type="text" v-model="keyword" placeholder="搜索最近联系人" @keyup="searchContact">
       </div>
     </div>
     <ul class="list">
@@ -25,6 +24,7 @@
   </div>
 </template>
 <script>
+  import debounce from 'lodash/debounce'
   import localData from '@/util/data.js'
   import { formatDate } from '@/filters/filters'
   
@@ -41,9 +41,9 @@
       }
     },
     methods: {
-      searchContact () {
+      searchContact: debounce(function () {
         this.$parent.handleSearch(this.keyword)
-      },
+      }, 200),
       handleChatChange (item) {
         localData.saveData('currentChat', item)
         this.$parent.handleChatChange(item)
@@ -66,70 +66,53 @@
 </script>
 <style lang="scss" scoped>
   .middle{
-    height: 100%;
-    width: 250px;
+    height: 530px;
+    overflow: hidden;
+    width: 230px;
     background: #e6e6e6;
-    overflow-y: scroll;
     .top-search {
-      position: sticky;
-      top: 0px;
-      background: #e6e6e6;
-      padding: 10px;
-      z-index: 2;
-      .search-box{
-        border: 1px solid #d9d7d6;
-        display: flex;
-      }
+     background: #e45050;
+     padding-bottom: 15px;
+     .search-box {
+       width: 180px;
+       margin: 0 auto;
+       border-radius: 20px;
+       background: #fff;
+       color: #a6b5d7;
+       padding: 3px 10px;
+     }
       input {
-        width: 120px;
-        height: 25px;
+        width: 150px;
+        height: 20px;
         outline: none;
-        padding: 5px 10px;
         border: none;
         flex: 1;
       }
       button{
-        width: 40px;
         border:none;
         outline: none;
         padding: 0;
         margin: 0;
-        text-align: center;
-        font-size: 12px;
-        cursor: pointer;
-      }
-      .clear {
-        font-style: normal;
-        display: none;
-        position: absolute;
-        right: 55px;
-        top: 18px;
-        font-size: 20px;
-        background: #e7e7e7;
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-        text-align: center;
-        border-radius: 50%;
-        cursor: pointer;
+        background: #fff;
+        color: #a6b5d7;
       }
       .show-clear {
         display: block;
       }
     }
     .list{
+      overflow-y: auto;
       padding: 0;
       margin: 0;
+      height: 485px;
+      background: #363e47;
       .list-item{
         display: flex;
         padding: 10px;
         position: relative;
         cursor: pointer;
-        &:hover{
-          background: #D9d8d8;
-        }
-        &.current{
-          background: #c3c3c4;
+        &:hover, &.current{
+          background: #2f363e;
         }
       }
       .avatar {
@@ -138,7 +121,7 @@
         img{
           width: 100%;
           height: 100%;
-          border-radius: 5px;
+          border-radius: 50%;
         }
       }
       .user{
@@ -150,11 +133,12 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          color: #fff;
         }
         .message{
           width: 155px;
           margin-top: 5px;
-          height: 17px;
+          height: 18px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -166,7 +150,7 @@
         position: absolute;
         right: 20px;
         bottom: 7px;
-        width: 20px;
+        width: 30px;
         height: 20px;
         line-height: 20px;
         border-radius: 20px;

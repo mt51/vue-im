@@ -101,6 +101,14 @@
 <style lang="scss" scoped>
   .page {
     width: 100%;
+    &-item {
+      &:hover {
+        background: #e45050;
+        color: #fff;
+        border-color: #e45050;
+        border-radius: none;
+      }
+    }
     .pagination {
       float: right;
       font-size: 0;
@@ -122,8 +130,10 @@
         }
       }
       .active {
-        background: #337ab7;
+        background: #e45050;
         color: #fff;
+        border-color: #e45050;
+        border-radius: none;
       }
     }
     .disabled {

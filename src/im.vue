@@ -1,29 +1,30 @@
 <template>  
-  <div class="vueim-wrapper">
-    <Alert></Alert>
-    <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
-      <LeftBar :mine="mine" v-if="!brief"></LeftBar>
-      <middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief"></middle>
-      <ChatBox :brief="brief" :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type"></ChatBox>
+  <div class="wrapper">
+    <div class="container">
+      <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
+        <div>
+          <Mine :mine="mine" v-if="!brief" />
+          <Middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief" />
+        </div>
+        <ChatBox :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type" :history="history" :upload-name="uploadName"></ChatBox>
+      </div>
+      <div class="mini" v-show="miniVisible" @click="handleMini">
+        <img :src="miniicon">
+      </div>
+      <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
+        <span>新消息</span>
+      </div>
+      <audio v-if="voice" :src="voice" ref="voice"></audio>
     </div>
-    <log :history="cloneHistory" v-if="historyVisible"></log>
-    <div class="mini" v-show="miniVisible" @click="handleMini">
-      <img :src="miniicon">
-    </div>
-    <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
-      <span>新消息</span>
-    </div>
-    <audio v-if="voice" :src="voice" ref="voice"></audio>
   </div>
 </template>
 <script>
-  import LeftBar from '@/components/leftbar.vue'
-  import middle from '@/components/middle.vue'
+  import Mine from '@/components/mine.vue'
+  import Middle from '@/components/middle.vue'
   import ChatBox from '@/components/chatbox.vue'
-  import Alert from '@/components/message.vue'
-  import log from '@/components/chatlog.vue'
   import { deepCopy, device } from '@/util/utils'
   import localData from '@/util/data.js'
+  import 'font-awesome/css/font-awesome.min.css'
 
   export default {
     name: 'vue-im',
@@ -78,13 +79,16 @@
       type: {
         type: String,
         default: 'POST'
+      },
+      uploadName: {
+        type: String,
+        default: 'image'
       }
     },
     data () {
       return {
         currentChat: this.makeCurrentChat(),
         cloneLists: this.makeCloneLists(),
-        cloneHistory: this.makeCloneHistory(),
         message: null,
         miniVisible: this.mini,
         visibleNewMsg: false,
@@ -94,9 +98,6 @@
     },
     methods: {
       makeCurrentChat () {
-        if (this.brief && this.chatWith) {
-          return this.chatWith
-        }
         const currentChat = localData.readData('currentChat')
         if (currentChat) {
           this.$emit('on-chat-change', currentChat)
@@ -113,7 +114,7 @@
           const tempLog = data.history[item.id]
           if (tempLog && tempLog.length > 0) {
             item.chatlog = tempLog[tempLog.length - 1].content
-            item.chatlogType = tempLog[tempLog.length - 1].type
+            item.chatlogType = tempLog[tempLog.length - 1].type || 'text'
             item.time = tempLog[tempLog.length - 1].time
           } else {
             item.chatlog = ''
@@ -121,14 +122,6 @@
           }
         })
         return cloneLists
-      },
-      makeCloneHistory () {
-        let history = deepCopy(this.history)
-        if (!history.records) return
-        history.records.forEach(item => {
-          item.mine = item.sender === this.mine.id
-        })
-        return history
       },
       handleChatChange (item) {
         this.currentChat = item
@@ -150,6 +143,10 @@
       getMessage (message) {
         this.handleVoice()
         message.mine = false
+        if (this.brief) {
+          this.message = message
+          return
+        }
         const current = this.cloneLists.find(item => {
           return item.id === message.sender
         })
@@ -174,6 +171,8 @@
           this.cloneLists.forEach(item => {
             if (item.id === id) {
               item.chatlog = history[history.length - 1].content
+              item.chatlogType = history[history.length - 1].type
+              item.time = history[history.length - 1].time
             }
           })
         } else {
@@ -233,12 +232,6 @@
         messageLists[message.sender].push(message)
         return messageLists
       },
-      handleHistoryVisible () {
-        this.historyVisible = !this.historyVisible
-        if (status) {
-          this.$emit('on-view-history', this.currentChat)
-        }
-      },
       handlePageChange (page) {
         this.$emit('on-page-change', page)
       },
@@ -250,17 +243,15 @@
       }
     },
     components: {
-      LeftBar,
-      middle,
-      ChatBox,
-      log,
-      Alert
+      Mine,
+      Middle,
+      ChatBox
     },
     watch: {
       lists: {
         handler () {
           this.cloneLists = this.makeCloneLists()
-          this.currentChat = this.cloneLists[0]
+          this.currentChat = this.makeCurrentChat()
         },
         deep: true
       }
@@ -284,23 +275,41 @@
     }
   }
 </script>
-<style lang="scss" scoped>
-  .vueim-wrapper {
+<style lang="scss">
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .wrapper {
+    width: 100%;
+    height: 100%;
+      ::-webkit-scrollbar {
+      width: 5px;
+      height: 12px;
+      -webkit-border-radius: 40%;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c3c3;
+      -webkit-border-radius: 12px;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     .vue-im {
       display: flex;
       justify-content: space-between;
-      width: 800px;
+      width: 80%;
+      min-width: 996px;
       height: 600px;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin: -300px 0 0 -400px;
       box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
     }
-    .brief{
-      width: 600px;
-      height: 600px;
-      margin: -300px 0 0 -300px;
+    .brief {
+      width: 60%;
     }
     .mini {
       position: fixed;
@@ -327,10 +336,9 @@
       height: 30px;
       line-height: 30px;
       text-align: center;
-      box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
-      border: 1px solid #000;
+      // box-shadow: 0 2px 2px 0 #e45050, 0 3px 1px -2px #e45050, 0 1px 5px 0 #e45050;
+      border: 1px solid #e45050;
       z-index: 100;
-      cursor: pointer;
     }
   }
   @keyframes twinkle {

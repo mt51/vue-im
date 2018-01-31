@@ -1,7 +1,7 @@
 <template>
   <transition name="message-fade">
     <div class="message" v-if="visible">
-      <div class="wrapper alert" :class="'alert-' + type">
+      <div class="message-wrapper alert" :class="'alert-' + type">
         <i class="fa fa-send"></i>
         <span>{{message}}</span>
       </div>
@@ -46,7 +46,7 @@
     width: 100%;
     text-align: center;
     z-index: 999;
-    .wrapper {
+    &-wrapper {
       display: inline-block;
     }
     .alert {
