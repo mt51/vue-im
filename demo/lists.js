@@ -263,5 +263,16 @@ export default {
         recvername: '贤心'
       }
     ]
-  }
+  },
+  'groups': [
+    {
+      'groupname': '前端群',
+      'id': '101',
+      'avatar': 'http://tp2.sinaimg.cn/2211874245/180/40050524279/0'
+    }, {
+      'groupname': 'Fly社区官方群',
+      'id': '102',
+      'avatar': 'http://tp2.sinaimg.cn/5488749285/50/5719808192/1'
+    }
+  ]
 }
