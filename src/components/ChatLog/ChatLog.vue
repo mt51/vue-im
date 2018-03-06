@@ -1,16 +1,13 @@
 <template>
   <transition name="collapse">
     <div class="chatlog" v-if="visible">
-      <div class="loading" v-show="loading">
-        <p>加载中。。。</p>
-      </div>
       <div class="chatlog-wrap">
         <div class="title">
           <span>聊天记录</span>
           <span class="close" @click="handleHistoryVisible">&times;</span>
         </div>
         <ul class="log-list">
-          <li class="log-item" v-for="(item, index) in history.records" :class="{'mine': item.mine}">
+          <li class="log-item" v-for="(item, index) in cloneHistory.records" :class="{'mine': item.mine}">
             <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate(true) }}</span></div>
             <div class="avatar">
               <img :src="item.avatar">
@@ -28,20 +25,22 @@
 
 <script>
   import { formatDate } from '@/filters/filters'
-  import Page from './pagination'
+  import { deepCopy } from '@/util/utils.js'
+  import Page from '../pagination'
   export default {
     name: 'chatlog',
     props: {
       history: Object,
-      loading: Boolean,
       value: {
         type: Boolean,
         default: false
-      }
+      },
+      mine: Object
     },
     data () {
       return {
-        visible: this.value
+        visible: this.value,
+        cloneHistory: null
       }
     },
     methods: {
@@ -57,7 +56,15 @@
         this.$emit('input', this.visible)
       },
       handlePageChange (page) {
-        this.$parent.handlePageChange(page)
+        this.$parent.$parent.handlePageChange(page)
+      },
+      makeCloneHistory () {
+        let history = deepCopy(this.history)
+        if (!history.records) return
+        history.records.forEach(item => {
+          item.mine = item.sender === this.mine.id
+        })
+        return history
       }
     },
     filters: {
@@ -69,6 +76,12 @@
     watch: {
       value (newV) {
         this.visible = newV
+      },
+      history: {
+        handler () {
+          this.cloneHistory = this.makeCloneHistory()
+        },
+        deep: true
       }
     }
   }
@@ -102,7 +115,7 @@
     .log-list{
       margin: 0 auto 30px;
       padding: 0 10px;
-      height: 460px;
+      height: 100%;
       overflow: auto;
     }
     .log-item{

@@ -1,30 +1,47 @@
 <template>  
   <div class="wrapper">
-    <div class="container">
+    <div class="container" :class="skin">
+      <TheHeader :mine="mine" :tab="currentTab" :skin="skin"></TheHeader>
       <div class="vue-im" ref="imdrag" :class="{'brief': brief}" v-show="!miniVisible">
-        <div>
-          <Mine :mine="mine" v-if="!brief" />
-          <Middle :lists="cloneLists" :currentChat="currentChat" v-if="!brief" />
+        
+        <Contacts 
+          v-show="currentTab === 'user'"
+          @on-open-chatbox="handleOpenChatBoxFromContact"
+          @on-view-members="handleViewGroupMembers"
+          :groups-list="groupsList"
+          :friends-list="lists"
+          :members-list="membersList"/>
+
+        <div class="im-chat-wrapper" v-show="currentTab === 'chat'">
+
+          <ChatList
+          :lists="cloneLists"
+          :currentChat="currentChat" v-if="!brief" />
+          <ChatBox
+            :imageUpload="imageUpload"
+            :currentChat="currentChat"
+            :lists="cloneLists"
+            :mine="mine"
+            :message="message"
+            :ext="ext"
+            :url="url"
+            :type="type"
+            :history="history"
+            :upload-name="uploadName" />
+
         </div>
-        <ChatBox :imageUpload="imageUpload" :currentChat="currentChat" :lists="cloneLists" :mine="mine" :message="message" :ext="ext" :url="url" :type="type" :history="history" :upload-name="uploadName"></ChatBox>
-      </div>
-      <div class="mini" v-show="miniVisible" @click="handleMini">
-        <img :src="miniicon">
-      </div>
-      <div class="newmsg" v-show="visibleNewMsg" @click="handleOpenNewMsg(null)">
-        <span>新消息</span>
       </div>
       <audio v-if="voice" :src="voice" ref="voice"></audio>
     </div>
   </div>
 </template>
 <script>
-  import Mine from '@/components/mine.vue'
-  import Middle from '@/components/middle.vue'
-  import ChatBox from '@/components/chatbox.vue'
-  import { deepCopy, device } from '@/util/utils'
-  import localData from '@/util/data.js'
-  import 'font-awesome/css/font-awesome.min.css'
+  import ChatList from '@/components/ChatList/ChatList.vue'
+  import ChatBox from '@/components/ChatBox/ChatBox.vue'
+  import Contacts from '@/components/Contacts/Contacts'
+  import TheHeader from '@/components/Header/TheHeader'
+  import { device } from '@/util/utils'
+  import storage from '@/util/storage'
 
   export default {
     name: 'vue-im',
@@ -36,6 +53,12 @@
         }
       },
       lists: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      groupsList: {
         type: Array,
         default () {
           return []
@@ -63,7 +86,8 @@
         default: null
       },
       voice: {
-        type: String
+        type: String,
+        default: require('./assets/default.mp3')
       },
       imageUpload: {
         type: Boolean,
@@ -83,22 +107,30 @@
       uploadName: {
         type: String,
         default: 'image'
+      },
+      membersList: {
+        type: Array,
+        default () {
+          return []
+        }
       }
     },
     data () {
       return {
-        currentChat: this.makeCurrentChat(),
-        cloneLists: this.makeCloneLists(),
+        currentChat: null,
+        cloneLists: [],
         message: null,
         miniVisible: this.mini,
         visibleNewMsg: false,
         newMsgLists: [],
-        historyVisible: false
+        historyVisible: false,
+        currentTab: 'user',
+        skin: 'blue'
       }
     },
     methods: {
       makeCurrentChat () {
-        const currentChat = localData.readData('currentChat')
+        const currentChat = storage.readData('currentChat')
         if (currentChat) {
           this.$emit('on-chat-change', currentChat)
         }
@@ -106,9 +138,10 @@
       },
       makeCloneLists () {
         if (!this.mine) return
-        const data = localData.readData(this.mine.id)
-        let cloneLists = deepCopy(this.lists)
+        const data = storage.readData(this.mine.id)
+        let cloneLists = []
         if (!data) return cloneLists
+        cloneLists = data.chatList ? data.chatList : []
         cloneLists.forEach(item => {
           item.count = 0
           const tempLog = data.history[item.id]
@@ -131,41 +164,45 @@
       emitSend (message) {
         this.$emit('on-send', message)
       },
-      handleSearch (keyword) {
-        this.cloneLists = this.makeCloneLists()
-        this.cloneLists = this.cloneLists.filter(item => {
-          return item.username.indexOf(keyword) !== -1
-        })
-      },
-      handleClearSearch () {
-        this.cloneLists = this.makeCloneLists()
-      },
       getMessage (message) {
         this.handleVoice()
+        if (!this.currentChat) {
+          this.handleChatChange({
+            id: message.sender,
+            avatar: message.avatar,
+            username: message.sendername
+          })
+        }
         message.mine = false
+        this.message = message
         if (this.brief) {
-          this.message = message
           return
         }
-        const current = this.cloneLists.find(item => {
+        const current = this.cloneLists.filter(item => {
           return item.id === message.sender
         })
-        if (!current) {
-          message.new = true
-          this.visibleNewMsg = true
-          this.newMsgLists = message
-        } else if (message.sender === this.currentChat.id) {
-          this.message = message
-        } else {
+        if (!current[0]) {
+          this.cloneLists.unshift({
+            id: message.sender,
+            username: message.sendername,
+            avatar: message.avatar,
+            count: 1,
+            new: true,
+            chatlog: message.content,
+            type: message.type,
+            time: message.time
+          })
+        } else if (current[0].id !== this.currentChat.id) {
           this.cloneLists.forEach(item => {
             if (item.id === message.sender) {
               item.count += 1
             }
           })
         }
+        this.updateStorageChatList(message)
       },
       updateCloneListsChatlogById (id) {
-        const data = localData.readData(this.mine.id)
+        const data = storage.readData(this.mine.id)
         const history = data.history[id]
         if (history) {
           this.cloneLists.forEach(item => {
@@ -240,47 +277,98 @@
         const IE = device()
         if (IE && IE < 9) return
         this.$refs.voice.play()
+      },
+      /**
+       * [handleTabChange 控制面板切换]
+       * @param  {[string]} type [面板显示类型： chat: 聊天框, user: 用户和群组列表 ]
+       * @return {[null]}
+       */
+      handleTabChange (type) {
+        this.currentTab = type
+      },
+      handleOpenChatBoxFromContact (contact) {
+        this.handleTabChange('chat')
+        this.$nextTick(() => {
+          this.handleChatChange(contact)
+        })
+        const tempChat = this.cloneLists.filter(item => item.id === contact.id)
+        if (tempChat && tempChat.length) {
+          let tempChatIndex
+          this.cloneLists.forEach((item, index) => {
+            if (item.id === contact.id) {
+              tempChatIndex = index
+            }
+          })
+          this.cloneLists.splice(tempChatIndex, 1)
+        }
+        this.cloneLists.unshift(contact)
+        this.updateCloneListsChatlogById(contact.id)
+        this.updateStorageChatList(contact)
+      },
+      handleSkinChange (skin) {
+        this.skin = skin
+      },
+      handleChatClose (index) {
+        this.cloneLists.splice(index, 1)
+        this.currentChat = this.cloneLists[0] || {}
+        storage.saveData('currentChat', this.currentChat)
+      },
+      handleViewGroupMembers (contact) {
+        this.$emit('on-view-members', contact)
+      },
+      updateStorageChatList (userInfo) {
+        let localData = storage.readData(this.mine.id)
+        const id = userInfo.id || userInfo.sender
+        const name = userInfo.username || userInfo.sendername
+        const tempData = localData.chatList.filter(item => item.id === id)
+        if (!tempData || tempData.length === 0) {
+          localData.chatList.push({
+            id: id,
+            avatar: userInfo.avatar,
+            username: name
+          })
+          storage.saveData(this.mine.id, localData)
+        }
       }
     },
     components: {
-      Mine,
-      Middle,
-      ChatBox
+      ChatBox,
+      TheHeader,
+      ChatList,
+      Contacts
     },
     watch: {
-      lists: {
+      mine: {
         handler () {
           this.cloneLists = this.makeCloneLists()
-          this.currentChat = this.makeCurrentChat()
+          this.currentChat = this.makeCurrentChat() || this.currentChat
+          const data = storage.readData(this.mine.id)
+          const tempData = {
+            avatar: this.mine.avatar,
+            id: this.mine.id,
+            username: this.mine.username,
+            history: data ? data.history : {},
+            chatList: this.cloneLists
+          }
+          storage.saveData(this.mine.id, tempData)
+          if (this.imageUpload && this.url === undefined) {
+            throw new Error('props url is required')
+          }
         },
         deep: true
       }
     },
-    created () {
+    mounted () {
+      this.skin = storage.getItem('skin') || this.skin
+      this.checkNotification()
       if (this.brief && !this.chatWith) {
         throw new Error('props chatWith is required when brief is true')
       }
       if (!this.mine) throw new Error('Missing required prop: "mine"')
-      const data = localData.readData(this.mine.id)
-      const tempData = {
-        avatar: this.mine.avatar,
-        id: this.mine.id,
-        username: this.mine.username,
-        history: data ? data.history : {}
-      }
-      localData.saveData(this.mine.id, tempData)
-      if (this.imageUpload && this.url === undefined) {
-        throw new Error('props url is required')
-      }
     }
   }
 </script>
 <style lang="scss">
-  html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-  }
   .wrapper {
     width: 100%;
     height: 100%;
@@ -296,17 +384,20 @@
     .container {
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
     .vue-im {
       display: flex;
       justify-content: space-between;
-      width: 80%;
-      min-width: 996px;
-      height: 600px;
+      width: 100%;
+      min-width: 800px;
+      height: calc(100% - 61px);
+      min-height: 600px;
       box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+    }
+    .im-chat-wrapper {
+      display: flex;
+      text-justify: space-between;
+      width: 100%;
     }
     .brief {
       width: 60%;
@@ -325,20 +416,6 @@
         width: 100%;
         height: 100%;
       }
-    }
-    .newmsg {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      margin-left: -30px;
-      animation: twinkle 2s ease infinite;
-      width: 60px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      // box-shadow: 0 2px 2px 0 #e45050, 0 3px 1px -2px #e45050, 0 1px 5px 0 #e45050;
-      border: 1px solid #e45050;
-      z-index: 100;
     }
   }
   @keyframes twinkle {

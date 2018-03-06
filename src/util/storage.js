@@ -16,7 +16,17 @@ const readData = function (key) {
   return localData ? JSON.parse(localData)[key] : localData
 }
 
+const getItem = function (name) {
+  return window.localStorage.getItem(name)
+}
+
+const setItem = function (name, data) {
+  return window.localStorage.setItem(name, data)
+}
+
 export default {
   saveData,
-  readData
+  readData,
+  getItem,
+  setItem
 }

@@ -1,12 +1,11 @@
 <template>
-  <div class="chat-box">
-    <div class="chat-box-head" v-if="currentChat" v-drag="target">
+  <div class="chat-box" v-if="currentChat && currentChat.id">
+    <div class="chat-box-head" v-drag="target">
       <span class="username">{{currentChat.username}}</span>
-      <span class="mini-mark" @click="handleMini">-</span>
     </div>
     <div class="main-chat-wrap">
       <div class="main-chat-container">
-        <div class="main-chat" ref="chat-main" v-if="currentChat">
+        <div class="main-chat" ref="chat-main">
           <ul class="chat-list" ref="chat-list">
             <li class="chat-item clearfix" v-for="(item, index) in records" :class="{'mine': item.mine}">
               <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
@@ -34,7 +33,7 @@
           </div>
         </div>
       </div>
-      <ChatLog :history="cloneHistory" v-model="historyVisible" />
+      <ChatLog :history="history" v-model="historyVisible" :mine="mine" />
     </div>
     <div class="image-prev" v-show="prevVisible && currentImage" @click="handleClosePrev">
       <img :src="currentImage" @click="handleClosePrev">
@@ -42,13 +41,13 @@
   </div>
 </template>
 <script>
-  import localData from '@/util/data.js'
+  import storage from '@/util/storage'
   import { deepCopy } from '@/util/utils.js'
   import { formatDate } from '@/filters/filters'
-  import ajax from '@/util/ajax'
+  import { post } from '@/util/ajax'
   import drag from '@/directives/drag'
-  import Emoji from './emoji'
-  import ChatLog from './chatlog'
+  import Emoji from '@/components/Emoji/Emoji'
+  import ChatLog from '@/components/ChatLog/ChatLog'
 
   export default {
     props: {
@@ -68,19 +67,13 @@
         focusClass: false,
         records: [],
         sendMessage: '',
-        localData: [],
+        storage: [],
         cloneLists: deepCopy(this.lists),
         target: null,
         emojiVisible: false,
         currentImage: '',
         prevVisible: false,
-        cloneHistory: this.makeCloneHistory(),
         historyVisible: false
-      }
-    },
-    created () {
-      if (this.currentChat) {
-        this.records = this.makeRecords()
       }
     },
     methods: {
@@ -88,16 +81,8 @@
         this.$parent.handleMini(true)
       },
       makeRecords () {
-        const history = localData.readData(this.mine.id).history
+        const history = storage.readData(this.mine.id).history
         return history[this.currentChat.id] ? history[this.currentChat.id] : []
-      },
-      makeCloneHistory () {
-        let history = deepCopy(this.history)
-        if (!history.records) return
-        history.records.forEach(item => {
-          item.mine = item.sender === this.mine.id
-        })
-        return history
       },
       handleFocus () {
         this.focusClass = true
@@ -115,6 +100,34 @@
           })
           e.preventDefault()
         }
+      },
+      handleScroll () {
+        this.$nextTick(() => {
+          const chatList = this.$refs['chat-list']
+          const chatMain = this.$refs['chat-main']
+          if (chatMain) {
+            chatMain.scrollTop = chatList.clientHeight
+          }
+        })
+      },
+      handleTimeVisible (item, index) {
+        if (index === 0) {
+          return true
+        } else {
+          return (this.records[index].time - this.records[index - 1].time > 10 * 60 * 1000)
+        }
+      },
+      saveRecord (message) {
+        const data = storage.readData(this.mine.id)
+        let records = data.history[message.sender]
+        if (!records) {
+          records = []
+        } else if (records.length > 10) {
+          records.shift(0)
+        }
+        records.push(message)
+        data.history[message.sender] = records
+        storage.saveData(this.mine.id, data)
       },
       handleSend (e) {
         if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
@@ -136,40 +149,7 @@
           recvername: this.currentChat.username,
           type: 'text'
         }
-        this.records.push(sendData)
-        this.saveRecord(sendData)
-        this.handleScroll()
-        this.sendMessage = ''
-        this.$parent.emitSend(sendData)
-        this.$parent.updateCloneListsChatlogById(this.currentChat.id)
-      },
-      handleScroll () {
-        this.$nextTick(() => {
-          const chatList = this.$refs['chat-list']
-          const chatMain = this.$refs['chat-main']
-          if (chatMain) {
-            chatMain.scrollTop = chatList.clientHeight
-          }
-        })
-      },
-      handleTimeVisible (item, index) {
-        if (index === 0) {
-          return true
-        } else {
-          return (this.records[index].time - this.records[index - 1].time > 10 * 60 * 1000)
-        }
-      },
-      saveRecord (message) {
-        const data = localData.readData(this.mine.id)
-        let records = data.history[this.currentChat.id]
-        if (!records) {
-          records = []
-        } else if (records.length > 10) {
-          records.shift(0)
-        }
-        records.push(message)
-        data.history[this.currentChat.id] = records
-        localData.saveData(this.mine.id, data)
+        this.afterSend(sendData)
       },
       handleSendEmoji (index) {
         this.$refs.textarea.focus()
@@ -184,6 +164,24 @@
           recvername: this.currentChat.username,
           type: 'emoji'
         }
+        this.afterSend(sendData)
+      },
+      handleSendImage (src) {
+        this.$refs.textarea.focus()
+        const sendData = {
+          content: '<img style="max-width: 100%;" src="' + src + '"></img>',
+          mine: true,
+          avatar: this.mine.avatar,
+          sender: this.mine.id,
+          recver: this.currentChat.id,
+          time: new Date().getTime(),
+          sendername: this.mine.username,
+          recvername: this.currentChat.username,
+          type: 'image'
+        }
+        this.afterSend(sendData)
+      },
+      afterSend (sendData) {
         this.records.push(sendData)
         this.saveRecord(sendData)
         this.handleScroll()
@@ -214,7 +212,7 @@
       },
       upload (name, file) {
         const self = this
-        ajax({
+        post({
           filename: name,
           file,
           url: this.url,
@@ -241,26 +239,6 @@
           }
         })
       },
-      handleSendImage (src) {
-        this.$refs.textarea.focus()
-        const sendData = {
-          content: '<img style="max-width: 100%;" src="' + src + '"></img>',
-          mine: true,
-          avatar: this.mine.avatar,
-          sender: this.mine.id,
-          recver: this.currentChat.id,
-          time: new Date().getTime(),
-          sendername: this.mine.username,
-          recvername: this.currentChat.username,
-          type: 'image'
-        }
-        this.records.push(sendData)
-        this.saveRecord(sendData)
-        this.handleScroll()
-        this.sendMessage = ''
-        this.$parent.emitSend(sendData)
-        this.$parent.updateCloneListsChatlogById(this.currentChat.id)
-      },
       handlePrevImage (e) {
         this.prevVisible = true
         this.currentImage = e.target.src
@@ -275,7 +253,6 @@
       }
     },
     mounted () {
-      this.handleScroll()
       this.target = this.$parent.$refs.imdrag
     },
     watch: {
@@ -325,11 +302,11 @@
     min-width: 400px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     border-right: 1px solid #e7e7e7;
     .chat-box-head{
-      height: 60px;
-      line-height: 60px;
+      height: 40px;
+      line-height: 40px;
       padding:0 20px;
       font-size: 20px;
       border-bottom: 1px solid #e7e7e7;
@@ -363,6 +340,7 @@
       height: 65%;
       overflow: auto;
       border-bottom: 1px solid #e7e7e7;
+      box-sizing: border-box;
       .chat-list{
         margin: 0;
         padding: 0 10px;
@@ -413,22 +391,17 @@
     }
     .chat-input {
       position: relative;
-      height: 160px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      height: 35%;
       box-sizing: border-box;
       padding: 0 10px;
       .tool-bar {
-        height: 40px;
+        height: 20%;
         line-height: 40px;
         .tool-bar-item {
-          margin-right: 5px;
+          margin-right: 8px;
           cursor: pointer;
           color: #777;
-          &:hover{
-            color: #e45050;
-          }
+          vertical-align: middle;
         }
       }
       .emjoi{
@@ -440,10 +413,10 @@
         font-size: 14px;
       }
       .input-box {
-        flex: 1;
+        height: 60%;
         textarea {
           width: 100%;
-          height: 95px;
+          height: 100%;
           line-height: 1.4;
           resize: none;
           border: none;
@@ -457,12 +430,11 @@
       }
       .send {
         text-align: right;
-        height: 46px;
+        height: 20%;
       }
       .send-btn {
         line-height: 26px;
         width: 60px;
-        background: #e45050;
         color: #fff;
         border: 1px solid #e7e7e7;
         font-size: 14px;
@@ -513,7 +485,7 @@
   .main-chat-wrap {
     display: flex;
     justify-content: space-between;
-    height: 539px;
+    height: calc(100% - 40px);
   }
   .main-chat-container {
     flex: 1;
