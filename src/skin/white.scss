@@ -1,0 +1,126 @@
+$mainBgColor: #e45050;
+$searchInputBgColor: #fff;
+$searchInputBdColor: #999;
+$searchInputTextColor: #a6b5d7;
+$topToolItemColor: #999;
+$middleBgColor: #fff;
+$middleBdColor: #ccc;
+$middleItemTextColor: #363e47;
+$contactLeftBgColor: #fff;
+$contactLeftBdColor: #ccc;
+$contactLeftTextColor: #363e47;
+$contactTabBdColor: #2f363e;
+$contactFGActiveBgColor: #f5f5f5;
+$contactFIActiveBgColor: #d5d5d5;
+.white {
+  .im-header {
+    background: #fff;
+    border: 1px solid #ccc;
+    .top-search {
+     .search-box {
+       background: $searchInputBgColor;
+       color: $searchInputTextColor;
+       border: 1px solid $searchInputBdColor;
+     }
+      button{
+        background: $searchInputBgColor;
+        color: $searchInputTextColor;
+      }
+    }
+    .im-tools-item:hover .btn {
+       color: $mainBgColor;
+    }
+    .im-tab-item {
+      &:hover .btn {
+        color: $mainBgColor;
+      }
+      .ti-arrow {
+        color: $mainBgColor;
+      }
+    }
+    .btn {
+      background: transparent;
+      color: $topToolItemColor;
+    }
+    .active .btn{
+      color: $mainBgColor;
+    }
+  }
+  .middle{
+    background: $middleBgColor;
+    border-right: 1px solid $middleBdColor;
+    .list{
+      .list-item{
+        &:hover, &.current{
+          background: #f5f5f5;
+        }
+      }
+      .user{
+        .username {
+          color: $middleItemTextColor;
+        }
+        .message{
+          color: $middleItemTextColor;
+        }
+      }
+      .time{
+        color: $middleItemTextColor;
+      }
+    }
+    .chat-close:hover {
+      background: $mainBgColor;
+    }
+  }
+  .im-contacts {
+    .contact-left {
+      background: #fff;
+      color: $contactLeftTextColor;
+      border-right: 1px solid $contactLeftBdColor;
+    }
+    .contact-tab {
+      border-bottom: 1px solid contactTabBdColor;
+    }
+    .concat-item {
+      .line {
+        border-bottom: 2px solid transparent;
+      }
+      &:hover>.line, &.active>.line {
+        border-bottom: 2px solid $mainBgColor;
+      }
+    }
+  }
+  .contact-card .cc-send {
+    background: $mainBgColor;
+  }
+  .friends {
+    &-group:hover{
+      background: $contactFGActiveBgColor;
+    }
+    .fg-item:hover {
+      background: $contactFIActiveBgColor;
+    }
+  }
+
+  .gg-list-container {
+    .gg-item:hover {
+      background: $contactFGActiveBgColor;
+    }
+    .gg-add-new {
+      background: $mainBgColor!important;
+      color: #fff;
+    }
+  }
+
+  .chat-box{
+    .tool-bar-item:hover{
+      color: $mainBgColor!important;
+    }
+    .send-btn {
+      background: $mainBgColor;
+      color: #fff;
+    }
+    .send-btn:hover {
+      background: #e7e7e7;
+    }
+  }
+}
