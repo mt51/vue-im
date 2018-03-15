@@ -156,10 +156,10 @@
       },
       getMessage (message) {
         this.handleVoice()
+        this.store.commit('getNewMsg', message)
         message.username = message.sendername
         message.id = message.sender
         message.count = this.store.states.newMsgLists[message.id].length
-        this.store.commit('getNewMsg', message)
         if (this.store.states.currentChat === null) {
           this.store.commit('setCurrentChat', message)
         }
