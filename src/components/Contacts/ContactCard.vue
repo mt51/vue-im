@@ -139,6 +139,8 @@
       }
       .cc-username {
         font-size: 12px;
+        height: 16px;
+        line-height: 16px;
         margin-top: 3px;
         color: #666;
         width: 100%;

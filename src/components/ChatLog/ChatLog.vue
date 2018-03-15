@@ -7,16 +7,27 @@
           <span class="close" @click="handleHistoryVisible">&times;</span>
         </div>
         <ul class="log-list">
-          <li class="log-item" v-for="(item, index) in cloneHistory.records" :class="{'mine': item.mine}">
+          <li class="log-item" v-for="(item, index) in cloneHistory" :class="{'mine': item.mine}">
             <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate(true) }}</span></div>
             <div class="avatar">
               <img :src="item.avatar">
             </div>
-            <div class="message">{{item.content}}</div>
+            <div class="message message-image" v-if="item.chatlogType === 'image'">
+              <img :src="item.content">
+            </div>
+            <div class="message message-file" v-else-if="item.chatlogType === 'file'">
+              <a class="down-link" :href="item.content.src" download><i class="fa fa-cloud-download down-link-icon"></i><span class="down-link-file">{{item.content.name}}</span></a>
+            </div>
+            <div class="message" v-else v-html="item.content"></div>
           </li>
         </ul>
-        <div class="page">
-          <Page :total="history.total" :countPage="history.size" @page-change="handlePageChange"></Page>
+        <div class="page" v-show="history.total">
+          <el-pagination
+            layout="prev, pager, next"
+            :total="history.total || 0"
+            :page-size="history.size"
+            @current-change="handlePageChange">
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -26,7 +37,6 @@
 <script>
   import { formatDate } from '@/filters/filters'
   import { deepCopy } from '@/util/utils.js'
-  import Page from '../pagination'
   export default {
     name: 'chatlog',
     props: {
@@ -40,7 +50,7 @@
     data () {
       return {
         visible: this.value,
-        cloneHistory: null
+        cloneHistory: []
       }
     },
     methods: {
@@ -60,18 +70,14 @@
       },
       makeCloneHistory () {
         let history = deepCopy(this.history)
-        if (!history.records) return
         history.records.forEach(item => {
           item.mine = item.sender === this.mine.id
         })
-        return history
+        return history.records
       }
     },
     filters: {
       formatDate
-    },
-    components: {
-      Page
     },
     watch: {
       value (newV) {

@@ -50,3 +50,13 @@ html, body{
   width: 100%;
   height: 100%;
 }
+.el-checkbox+.el-checkbox {
+  margin-left: 0;
+  display: block;
+}
+.el-checkbox {
+  display: block;
+}
+.el-transfer {
+  margin-left: 56px;
+}

@@ -43,3 +43,7 @@ export function device () {
     (agent.match(/msie\s(\d+)/) || [])[1] || '11'
   ) : false
 }
+
+export function objIsEmpty (obj) {
+  return Object.keys(obj).length === 0
+}

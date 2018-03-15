@@ -12,17 +12,23 @@
               <div class="avatar">
                 <img :src="item.avatar">
               </div>
-              <div class="chats" v-if="item.type === 'text'" v-html="item.content"></div>
-              <div class="chats" :class="{'chats-image': item.type === 'image'}" @click="handlePrevImage" v-html="item.content" v-else></div>
+              <div class="chats chats-image" v-if="item.chatlogType === 'image'">
+                <img :src="item.content">
+              </div>
+              <div class="chats chats-file" v-else-if="item.chatlogType === 'file'">
+                <a class="down-link" :href="item.content.src" download><i class="fa fa-cloud-download down-link-icon"></i><span class="down-link-file">{{item.content.name}}</span></a>
+              </div>
+              <div class="chats" v-else v-html="item.content"></div>
             </li>
           </ul>
         </div>
-        <div class="chat-input" v-if="currentChat" :class="{'focus': focusClass}">
+        <div class="chat-input" :class="{'focus': focusClass}">
           <Emoji v-show="emojiVisible"></Emoji>
-          <form ref="uploadForm"><input type="file" :name="uploadName" class="image-file" ref="file" @change="handleFileChange"></form>
           <div class="tool-bar">
             <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
-            <span class="tool-bar-item fa fa-file-image-o" v-if="imageUpload" @click="handleOpenUpload(null)"></span>
+            <el-upload :action="action" v-if="action !== ''" :before-upload="handleBeforeUpload" :on-success="handleUploadSuccess" :on-error="handleUploadError" :name="uploadName" :show-file-list="false" class="file-upload">
+              <span class="tool-bar-item fa fa-file-o"></span>
+            </el-upload>
             <span class="tool-bar-item history" @click="handleHistoryVisible">历史记录</span>
           </div>
           <div class="input-box">
@@ -42,38 +48,35 @@
 </template>
 <script>
   import storage from '@/util/storage'
-  import { deepCopy } from '@/util/utils.js'
   import { formatDate } from '@/filters/filters'
-  import { post } from '@/util/ajax'
+  import { deepCopy } from '@/util/utils'
   import drag from '@/directives/drag'
   import Emoji from '@/components/Emoji/Emoji'
   import ChatLog from '@/components/ChatLog/ChatLog'
 
   export default {
     props: {
-      currentChat: Object,
       mine: Object,
-      message: Object,
-      lists: Array,
-      url: String,
+      action: String,
       type: String,
       ext: Array,
       uploadName: String,
-      imageUpload: Boolean,
-      history: Object
+      history: Object,
+      store: Object,
+      maxSize: Number
     },
     data () {
       return {
         focusClass: false,
         records: [],
         sendMessage: '',
-        storage: [],
-        cloneLists: deepCopy(this.lists),
         target: null,
         emojiVisible: false,
         currentImage: '',
         prevVisible: false,
-        historyVisible: false
+        historyVisible: false,
+        maxByte: this.maxSize ? this.maxSize * 1024 * 1024 : 0,
+        fileName: ''
       }
     },
     methods: {
@@ -81,8 +84,8 @@
         this.$parent.handleMini(true)
       },
       makeRecords () {
-        const history = storage.readData(this.mine.id).history
-        return history[this.currentChat.id] ? history[this.currentChat.id] : []
+        const history = storage.readData('iminfo').history
+        return this.currentChat && history[this.currentChat.id] ? history[this.currentChat.id] : []
       },
       handleFocus () {
         this.focusClass = true
@@ -117,37 +120,19 @@
           return (this.records[index].time - this.records[index - 1].time > 10 * 60 * 1000)
         }
       },
-      saveRecord (message) {
-        const data = storage.readData(this.mine.id)
-        let records = data.history[message.sender]
-        if (!records) {
-          records = []
-        } else if (records.length > 10) {
-          records.shift(0)
-        }
-        records.push(message)
-        data.history[message.sender] = records
-        storage.saveData(this.mine.id, data)
-      },
       handleSend (e) {
-        if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
+        if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '').length > 800) {
+          this.$message('发送内容长度不能超过300')
           return false
         }
-        this.$refs.textarea.focus()
         if (this.sendMessage.replace(/(^\s*)|(\s*$)/g, '') === '') {
           this.$message('消息内容不能为空')
           return
         }
+        this.$refs.textarea.focus()
         const sendData = {
           content: this.sendMessage,
-          mine: true,
-          avatar: this.mine.avatar,
-          sender: this.mine.id,
-          recver: this.currentChat.id,
-          time: new Date().getTime(),
-          sendername: this.mine.username,
-          recvername: this.currentChat.username,
-          type: 'text'
+          chatlogType: 'text'
         }
         this.afterSend(sendData)
       },
@@ -155,21 +140,64 @@
         this.$refs.textarea.focus()
         const sendData = {
           content: '<i class="emoji-item emoji' + index + '"></i>',
-          mine: true,
-          avatar: this.mine.avatar,
-          sender: this.mine.id,
-          recver: this.currentChat.id,
-          time: new Date().getTime(),
-          sendername: this.mine.username,
-          recvername: this.currentChat.username,
-          type: 'emoji'
+          chatlogType: 'emoji'
         }
         this.afterSend(sendData)
       },
       handleSendImage (src) {
         this.$refs.textarea.focus()
         const sendData = {
-          content: '<img style="max-width: 100%;" src="' + src + '"></img>',
+          content: src,
+          chatlogType: 'image'
+        }
+        this.afterSend(sendData)
+      },
+      handleSendFile (src) {
+        this.$refs.textarea.focus()
+        const content = {
+          src: src,
+          name: this.fileName
+        }
+        const sendData = {
+          content: content,
+          chatlogType: 'file'
+        }
+        this.afterSend(sendData)
+      },
+      handleBeforeUpload (file) {
+        const fileSize = file.size
+        if (this.maxByte && this.maxByte < fileSize) {
+          this.$message({
+            type: 'error',
+            message: `文件大小不能超过${this.maxSize}M`
+          })
+          return false
+        }
+        this.fileName = file.name
+      },
+      handleUploadSuccess (data) {
+        this.$message({
+          type: 'success',
+          message: '文件发送成功'
+        })
+        const src = data.src
+        const fileNameArr = this.fileName.split('.')
+        const ext = fileNameArr[fileNameArr.length - 1].toLowerCase()
+        const imgExt = ['bmp', 'jpg', 'jpeg', 'png', 'gif']
+        if (imgExt.indexOf(ext) > -1) {
+          this.handleSendImage(src)
+        } else {
+          this.handleSendFile(src)
+        }
+      },
+      handleUploadError () {
+        this.$message({
+          type: 'error',
+          message: '文件发送失败，请重试'
+        })
+      },
+      afterSend (sendData) {
+        Object.assign(sendData, {
           mine: true,
           avatar: this.mine.avatar,
           sender: this.mine.id,
@@ -177,23 +205,16 @@
           time: new Date().getTime(),
           sendername: this.mine.username,
           recvername: this.currentChat.username,
-          type: 'image'
-        }
-        this.afterSend(sendData)
-      },
-      afterSend (sendData) {
+          id: this.currentChat.id
+        })
         this.records.push(sendData)
-        this.saveRecord(sendData)
         this.handleScroll()
         this.sendMessage = ''
         this.$parent.emitSend(sendData)
-        this.$parent.updateCloneListsChatlogById(this.currentChat.id)
+        this.store.commit('updateLocalHistory', sendData)
       },
       handleEmojiVisible (status) {
         this.emojiVisible = status === null ? !this.emojiVisible : status
-      },
-      handleOpenUpload () {
-        this.$refs.file.click()
       },
       handleFileChange (e) {
         const file = e.target.files[0]
@@ -210,35 +231,6 @@
         this.$refs.uploadForm.reset()
         this.upload(name, file)
       },
-      upload (name, file) {
-        const self = this
-        post({
-          filename: name,
-          file,
-          url: this.url,
-          type: this.type,
-          onSuccess (response) {
-            if (response && response.src) {
-              self.handleSendImage(response.src)
-              self.$message({
-                message: '已发送',
-                type: 'success'
-              })
-            } else {
-              self.$message({
-                message: '发送失败',
-                type: 'danger'
-              })
-            }
-          },
-          onError (err) {
-            self.$message({
-              message: err.statusText || '发送失败',
-              type: 'danger'
-            })
-          }
-        })
-      },
       handlePrevImage (e) {
         this.prevVisible = true
         this.currentImage = e.target.src
@@ -249,31 +241,35 @@
       },
       handleHistoryVisible () {
         this.historyVisible = true
-        this.$emit('on-view-history', this.currentChat)
+        this.$parent.handleHistoryVisible(this.currentChat)
+      },
+      chatTypeClass (type) {
+        return `chats-${type}`
       }
     },
     mounted () {
       this.target = this.$parent.$refs.imdrag
     },
+    computed: {
+      currentChat () {
+        return this.store.states.currentChat
+      },
+      newMsgsList () {
+        return this.currentChat && this.store.states.localHistory[this.currentChat.id]
+      }
+    },
     watch: {
       currentChat: {
         handler () {
-          this.records = this.makeRecords()
-          this.handleScroll()
-        },
-        deep: true
-      },
-      message () {
-        let message = deepCopy(this.message)
-        message.mine = false
-        if (message.new) {
-          this.records = this.makeRecords().concat([message])
-        } else {
-          this.$parent.updateCloneListsChatlogById(message.sender)
-          this.records.push(message)
+          if (this.newMsgsList && this.newMsgsList.length > 0) {
+            this.records = deepCopy(this.newMsgsList)
+          } else {
+            this.records = this.makeRecords()
+          }
+          this.$nextTick(() => {
+            this.handleScroll()
+          })
         }
-        this.saveRecord(message)
-        this.handleScroll()
       }
     },
     filters: {
@@ -477,6 +473,24 @@
       img {
         max-width: 80%;
       }
+    }
+    .file-upload {
+      display: inline-block;
+    }
+    .down-link {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+      &:hover .down-link-file {
+        text-decoration: underline;
+      }
+    }
+    .down-link-icon {
+      font-size: 30px;
+    }
+    .down-link-file {
+      display: inline-block;
+      margin-left: 10px;
     }
   }
   .focus {

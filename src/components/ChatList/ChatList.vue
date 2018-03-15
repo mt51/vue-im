@@ -8,6 +8,7 @@
         <div class="user">
           <div class="username">{{item.username}}</div>
           <div class="message" v-if="item.chatlogType === 'image'">图片</div>
+          <div class="message" v-else-if="item.chatlogType === 'file'">文件</div>
           <div class="message" v-else v-html="item.chatlog"></div>
         </div>
         <div class="newmsg-bubble" v-show="item.count">{{item.count}}</div>
@@ -18,15 +19,11 @@
   </div>
 </template>
 <script>
-  import storage from '@/util/storage'
-
   import { formatDate } from '@/filters/filters'
-  
   export default {
     name: 'middle',
     props: {
-      lists: Array,
-      currentChat: Object
+      store: Object
     },
     data () {
       return {
@@ -35,8 +32,11 @@
     },
     methods: {
       handleChatChange (item) {
-        storage.saveData('currentChat', item)
-        this.$parent.handleChatChange(item)
+        this.store.commit('setCurrentChat', item)
+        if (item.count !== 0) {
+          item.count = 0
+          this.store.commit('resetItemCount', item)
+        }
       },
       handleClearSearch () {
         if (this.keyword !== '') {
@@ -49,11 +49,19 @@
         this.clearVisible = true
       },
       handleChatClose (index) {
-        this.$parent.handleChatClose(index)
+        this.store.commit('removeChatLog', index)
       }
     },
     filters: {
       formatDate
+    },
+    computed: {
+      lists () {
+        return this.store.states.chatLogsList
+      },
+      currentChat () {
+        return this.store.states.currentChat
+      }
     }
   }
 </script>

@@ -29,7 +29,8 @@
     },
     data () {
       return {
-        cloneFriends: []
+        cloneFriends: [],
+        clickCount: 0
       }
     },
     methods: {
@@ -58,7 +59,15 @@
       },
       handleUserItemClick (contact) {
         contact.type = 'friend'
-        this.$parent.handleCurrentConcatChange(contact)
+        this.clickCount++
+        setTimeout(() => {
+          if (this.clickCount >= 2) {
+            this.$parent.handleOpenChatBox(contact)
+          } else {
+            this.$parent.handleCurrentConcatChange(contact)
+          }
+          this.clickCount = 0
+        }, 200)
       }
     },
     watch: {

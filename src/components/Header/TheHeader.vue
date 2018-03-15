@@ -2,15 +2,27 @@
   <div class="im-header">
     <div class="current-user">
       <img class="avatar" :src="mine.avatar">
-      <div class="top-search">
+      <div class="top-search" v-if="!brief">
         <div class="search-box">
           <button class="search fa fa-search"></button>
-          <input type="text" v-model="keyword" @keyup="searchContact">
+          <input type="text" v-model="keyword" @focus="handleSRVisible">
+          <p v-show="searchVisible" class="search-close" @click="handleSRVisible">&times;</p>
         </div>
       </div>
     </div>
-    <ul class="im-tab">
+    <div class="search-result-panel" v-show="searchVisible">
+      <div class="sr-title-empty" v-show="searchResult.length === 0">好友搜索</div>
+      <div class="sr-title" v-show="searchResult.length > 0">好友</div>
+      <ul class="sr-list">
+        <li class="sr-list-item" v-for="(item, index) in searchResult" :key="index" @click="handleClickSearchItem(item)">
+          <img class="avatar" :src="item.avatar">
+          <p>{{item.username}}</p>
+        </li>
+      </ul>
+    </div>
+    <ul class="im-tab" v-if="!brief">
       <li class="im-tab-item tab-chatlist" :class="{'active': currentTab === 'chat'}" title="会话列表" @click="handleCurrentTab('chat')">
+        <i class="new-msg" v-show="count !== 0">{{count}}</i>
         <button class="btn btn-chatlist"><i class="fa fa-comment-o"></i></button>
         <p class="ti-arrow"><i class="fa fa-caret-up"></i></p>
       </li>
@@ -33,29 +45,25 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
 import storage from '@/util/storage'
 export default {
   name: 'TheHeader',
   props: {
     mine: Object,
-    tab: String,
-    skin: String
+    store: Object,
+    brief: Boolean,
+    lists: Array
   },
   data () {
     return {
       keyword: '',
-      currentTab: this.tab,
-      skinVisible: false
+      skinVisible: false,
+      searchVisible: false
     }
   },
   methods: {
-    searchContact: debounce(function () {
-      this.$parent.handleSearch(this.keyword)
-    }, 200),
     handleCurrentTab (type) {
-      this.currentTab = type
-      this.$parent.handleTabChange(type)
+      this.store.commit('setCurrentTab', type)
     },
     handleSkinVisible () {
       this.skinVisible = !this.skinVisible
@@ -63,14 +71,38 @@ export default {
     handleSkinChange (skin) {
       this.handleSkinVisible()
       if (this.skin !== skin) {
-        this.$parent.handleSkinChange(skin)
-        storage.setItem('skin', skin)
+        this.store.commit('setSkin', skin)
+        storage.setItem('imskin', skin)
       }
+    },
+    handleSRVisible () {
+      this.searchVisible = !this.searchVisible
+    },
+    handleClickSearchItem (item) {
+      this.store.commit('setCurrentChat', item)
+      this.store.commit('setCurrentTab', 'chat')
+      this.store.commit('updateChatLogsList', item)
+      this.searchVisible = !this.searchVisible
     }
   },
   watch: {
     tab () {
       this.currentTab = this.tab
+    }
+  },
+  computed: {
+    skin () {
+      return this.store.states.skin
+    },
+    currentTab () {
+      return this.store.states.currentTab
+    },
+    count () {
+      return this.store.states.count
+    },
+    searchResult () {
+      if (this.keyword === '') return []
+      return this.lists.filter(item => item.username.indexOf(this.keyword) > -1)
     }
   }
 }
@@ -100,14 +132,15 @@ export default {
     }
     .top-search {
       display: inline-block;
-     .search-box {
-       width: 180px;
-       height: 20px;
-       line-height: 20px;
-       margin: 14px auto;
-       border-radius: 20px;
-       padding: 3px 10px;
-     }
+      .search-box {
+        position: relative;
+        width: 180px;
+        height: 20px;
+        line-height: 20px;
+        margin: 14px auto;
+        border-radius: 20px;
+        padding: 3px 10px;
+      }
       input {
         width: 150px;
         height: 20px;
@@ -121,8 +154,23 @@ export default {
         padding: 0;
         margin: 0;
       }
-      .show-clear {
-        display: block;
+      .search-close {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 18px;
+        background: #d5d5d5;
+        cursor: pointer;
+        color: #000;
+        font-size: 20px;
+        font-weight: 400;
+        &:hover {
+          background: #ccc;
+        }
       }
     }
     .im-tab, .im-tools {
@@ -191,6 +239,58 @@ export default {
       }
       &:hover {
         background: #f5f5f5;
+      }
+    }
+    .tab-chatlist {
+      position: relative;
+    }
+    .new-msg {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      background: #f00;
+      color: #fff;
+      width: 32px;
+      height: 26px;
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 26px;
+      text-align: center;
+    }
+    .search-result-panel {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      bottom: 0px;
+      width: 260px;
+      background: #fff;
+      z-index: 999;
+      box-shadow: 0 0 20px #ccc;
+      overflow: auto;
+      .sr-title {
+        padding: 20px 10px;
+        font-size:16px;
+        border-bottom: 1px solid #ccc;
+      }
+      .sr-title-empty {
+        padding: 20px 10px;
+        font-size:16px;
+        border: none;
+        text-align: center;
+      }
+      .sr-list-item {
+        display: block;
+        width: 100%;
+        height: 60px;
+        cursor: pointer;
+        &:hover {
+          background: #ccc;
+        }
+        p {
+          display: inline-block;
+          height: 60px;
+          line-height: 60px;
+        }
       }
     }
   }

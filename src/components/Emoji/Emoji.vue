@@ -22,8 +22,8 @@
 <style lang="scss">
 .emoji {
   position: absolute;
-  top: -126%;
-  left: -20%;
+  top: -220px;
+  left: -200px;
   width: 400px;
   height: 200px;
   overflow: auto;

@@ -9,24 +9,24 @@
         </ul>
       </div>
       <div class="contact-content">
-        <GroupList :groups-list="groupsList" v-show="contactTab === 'group'" />
+        <GroupList :groups-list="groupsList" :lists="friendsList" v-show="contactTab === 'group'" />
         <FriendList :friends-list="friendsList" v-show="contactTab === 'friend'" />
       </div>
     </div>
-    <ContactCard :contact="currentContact" :members-list="membersList" />
+    <ContactCard :store="store" :contact="currentContact" :members-list="membersList" />
   </div>
 </template>
 <script>
   import GroupList from '@/components/GroupList/GroupList'
   import FriendList from '@/components/FriendList/FriendList'
   import ContactCard from '@/components/Contacts/ContactCard'
-  import { deepCopy } from '@/util/utils'
   export default {
     name: 'Contacts',
     props: {
       membersList: Array,
       groupsList: Array,
-      friendsList: Array
+      friendsList: Array,
+      store: Object
     },
     data () {
       return {
@@ -44,10 +44,15 @@
           this.$emit('on-view-members', contact)
         }
       },
+      handleCreateNewGroup (data) {
+        this.$emit('on-add-group', data)
+      },
       handleOpenChatBox (contact) {
-        const tempCotact = deepCopy(contact)
-        delete tempCotact.type
-        this.$emit('on-open-chatbox', tempCotact)
+        delete contact.key
+        delete contact.label
+        this.store.commit('setCurrentChat', contact)
+        this.store.commit('setCurrentTab', 'chat')
+        this.store.commit('updateChatLogsList', contact)
       }
     },
     components: {
