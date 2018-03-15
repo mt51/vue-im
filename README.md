@@ -166,14 +166,14 @@ $ npm install vue-im --save
       time: new Date().getTime(), // 发送时间
       sendername: this.lists[0].username, // 发送人名称
       recvername: this.mine.username // 接收人名称， 当前登录用户
-      type: 'text'  // 消息类型
+      chatlogType: 'text'  // 消息类型， text为文本，file文件，image图片
     }
 
 ```
 
-##### 7.发送图片
+##### 7.发送文件和图片
 
-发送图片后台接口的返回值格式： 
+发送文件和图片后台接口的返回值格式： 
 
 ``` js
     {
@@ -212,7 +212,8 @@ html
         recver: this.mine.id,
         time: new Date().getTime(),
         sendername: this.lists[0].username,
-        recvername: this.mine.username
+        recvername: this.mine.username,
+        chatlogType: 'text'  // 消息类型， text为文本，file文件，image图片
     })
     ....
 
@@ -232,18 +233,14 @@ html
 | mine        | Object  |       ——      | 初始值，必需          |
 | lists     | Array  |     空数组      | 联系人数组，好友数组 |
 | history  | Object |    空对象     | 历史记录数据              |
-| mini     | Boolean |    false     | true： 默认聊天框是否最小化    |
-| miniicon     | String |    //cn.vuejs.org/images/logo.png     | 设置聊天框最小化时的图标    |
-| notice | Boolean |    false     | 是否启用html5 Notification 提醒 |
 | brief | Boolean |    false     |  是否使用客服模式  |
 | voice | String |    ——     |  新消息声音提醒，需要传入声音文件，使用mp3格式  |
-| image-upload | Boolean |    true     |  是否启用图片发送功能  |
 | ext | Array |    []     |  配置图片发送支持的格式  |
-| url | String |    ——     |  图片上传的后台地址，启用图片发送功能时该项为必需  |
+| action | String |    ——     |  图片上传的后台地址，启用图片发送功能时该项为必需  |
 | upload-name | String |    image     |  图片上传的表单的name属性  |
 | members-list | Array |    空数组     |  聊天的群组成员列表  |
 | groups-list | Array |    空数组     |  聊天的群组列表  |
-| chat-with | Object |    ——     |  客服模式下的会话对象，客服模式下必需  |
+| chat | Object |    ——     |  客服模式下的会话对象，客服模式下必需  |
 
 
 
@@ -264,9 +261,7 @@ html
 
 ## TODOS
 
-* 样式重写，目前是高仿微信来做的，后面试着重构界面风格
 * 添加好友，删除好友功能
-* 群组功能
 * ...
 
 暂时只想到这些，有想法的可以提issues，可以添加
