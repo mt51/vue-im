@@ -241,6 +241,8 @@ html
 | members-list | Array |    空数组     |  聊天的群组成员列表  |
 | groups-list | Array |    空数组     |  聊天的群组列表  |
 | chat | Object |    ——     |  客服模式下的会话对象，客服模式下必需  |
+| un-read-list | Array |    空数组     |  离线消息，格式同消息  |
+
 
 
 
