@@ -178,6 +178,21 @@
         margin: 0;
       }
     }
+    .down-link {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+      &:hover .down-link-file {
+        text-decoration: underline;
+      }
+    }
+    .down-link-icon {
+      font-size: 30px;
+    }
+    .down-link-file {
+      display: inline-block;
+      margin-left: 10px;
+    }
   }
   .collapse-enter-active, .collapse-leave-active {
     transition: all 0.5s;

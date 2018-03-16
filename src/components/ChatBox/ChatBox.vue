@@ -1,7 +1,7 @@
 <template>
   <div class="chat-box" v-if="currentChat && currentChat.id">
     <div class="chat-box-head" v-drag="target">
-      <span class="username">{{currentChat.username}}</span>
+      <span class="username">{{currentChatInfo && currentChatInfo.username}}</span>
     </div>
     <div class="main-chat-wrap">
       <div class="main-chat-container">
@@ -10,7 +10,7 @@
             <li class="chat-item clearfix" v-for="(item, index) in records" :class="{'mine': item.mine}">
               <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
               <div class="avatar">
-                <img :src="item.avatar">
+                <img :src="userAvatar(item.sender)">
               </div>
               <div class="chats chats-image" v-if="item.chatlogType === 'image'">
                 <img :src="item.content">
@@ -47,9 +47,7 @@
   </div>
 </template>
 <script>
-  import storage from '@/util/storage'
   import { formatDate } from '@/filters/filters'
-  import { deepCopy } from '@/util/utils'
   import drag from '@/directives/drag'
   import Emoji from '@/components/Emoji/Emoji'
   import ChatLog from '@/components/ChatLog/ChatLog'
@@ -68,7 +66,6 @@
     data () {
       return {
         focusClass: false,
-        records: [],
         sendMessage: '',
         target: null,
         emojiVisible: false,
@@ -82,10 +79,6 @@
     methods: {
       handleMini () {
         this.$parent.handleMini(true)
-      },
-      makeRecords () {
-        const history = storage.readData('iminfo').history
-        return this.currentChat && history[this.currentChat.id] ? history[this.currentChat.id] : []
       },
       handleFocus () {
         this.focusClass = true
@@ -140,7 +133,7 @@
         this.$refs.textarea.focus()
         const sendData = {
           content: '<i class="emoji-item emoji' + index + '"></i>',
-          chatlogType: 'emoji'
+          chatlogType: 'text'
         }
         this.afterSend(sendData)
       },
@@ -204,10 +197,9 @@
           recver: this.currentChat.id,
           time: new Date().getTime(),
           sendername: this.mine.username,
-          recvername: this.currentChat.username,
+          recvername: this.currentChatInfo.username,
           id: this.currentChat.id
         })
-        this.records.push(sendData)
         this.handleScroll()
         this.sendMessage = ''
         this.$parent.emitSend(sendData)
@@ -241,35 +233,56 @@
       },
       handleHistoryVisible () {
         this.historyVisible = true
-        this.$parent.handleHistoryVisible(this.currentChat)
+        let chat = Object.assign(this.currentChatInfo, this.currentChat)
+        this.$parent.handleHistoryVisible(chat)
       },
       chatTypeClass (type) {
         return `chats-${type}`
+      },
+      userAvatar (userId) {
+        if (!this.userInfoCenter[userId]) {
+          return ''
+        } else {
+          return this.userInfoCenter[userId].avatar
+        }
       }
     },
     mounted () {
       this.target = this.$parent.$refs.imdrag
     },
     computed: {
+      userInfoCenter () {
+        return this.store.states.userInfoCenter
+      },
       currentChat () {
         return this.store.states.currentChat
       },
-      newMsgsList () {
-        return this.currentChat && this.store.states.localHistory[this.currentChat.id]
+      currentChatInfo () {
+        return this.userInfoCenter[this.currentChat.id]
+      },
+      records () {
+        if (!this.currentChat) {
+          return []
+        } else {
+          return this.store.states.localHistory[this.currentChat.id]
+        }
       }
     },
     watch: {
       currentChat: {
         handler () {
-          if (this.newMsgsList && this.newMsgsList.length > 0) {
-            this.records = deepCopy(this.newMsgsList)
-          } else {
-            this.records = this.makeRecords()
-          }
           this.$nextTick(() => {
             this.handleScroll()
           })
         }
+      },
+      records: {
+        handler (newV) {
+          this.$nextTick(() => {
+            this.handleScroll()
+          })
+        },
+        deep: true
       }
     },
     filters: {

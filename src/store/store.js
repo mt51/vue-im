@@ -10,8 +10,6 @@ const saveChatList = function (data) {
   data.forEach(item => {
     let tempItem = {
       id: item.id,
-      username: item.username,
-      avatar: item.avatar,
       type: item.type
     }
     tempData.push(tempItem)
@@ -29,6 +27,12 @@ const saveHistory = function (history) {
       tempData[key] = history[key]
     }
   })
+  for (let key in tempData) {
+    tempData[key].forEach(item => {
+      delete item.avatar
+      delete item.username
+    })
+  }
   let localData = storage.readData('iminfo')
   localData.history = tempData
   storage.saveData('iminfo', localData)
@@ -47,7 +51,8 @@ const IMStroe = function (IM, initialState = {}) {
     count: 0,
     skin: 'blue',
     mine: null,
-    localHistory: {}
+    localHistory: {},
+    userInfoCenter: {}
   }
 
   for (let prop in initialState) {
@@ -60,12 +65,16 @@ const IMStroe = function (IM, initialState = {}) {
 IMStroe.prototype.mutations = {
   setCurrentChat (states, currentChat) {
     const oldCurrentChat = states.currentChat
-    if (!currentChat) states.currentChat = null
-    else if (oldCurrentChat === null || oldCurrentChat.id !== currentChat.id) {
-      states.currentChat = currentChat
-      currentChat.hostId = states.mine.id
+    if (!currentChat) {
+      return null
+    } else if (oldCurrentChat === null || oldCurrentChat.id !== currentChat.id) {
+      states.currentChat = {
+        id: currentChat.id,
+        hostId: states.mine.id,
+        type: currentChat.type
+      }
       this.IM.$emit('on-chat-change', currentChat)
-      storage.saveData('currentChat', currentChat)
+      storage.saveData('currentChat', states.currentChat)
     }
     if (oldCurrentChat !== null) {
       states.newMsgLists[oldCurrentChat.id] = []
@@ -140,11 +149,16 @@ IMStroe.prototype.mutations = {
       states.count += 1
     }
   },
+  setLocalHistory (states, localHistory) {
+    states.localHistory = localHistory
+  },
   updateLocalHistory (states, sendData) {
-    if (!states.localHistory.hasOwnProperty(sendData.id)) {
-      states.localHistory[sendData.id] = []
+    const tempData = deepCopy(states.localHistory)
+    if (!tempData.hasOwnProperty(sendData.id)) {
+      tempData[sendData.id] = []
     }
-    states.localHistory[sendData.id].push(sendData)
+    tempData[sendData.id].push(sendData)
+    states.localHistory = tempData
     saveHistory(states.localHistory)
     this.commit('updateChatLog', sendData)
   },
@@ -155,6 +169,28 @@ IMStroe.prototype.mutations = {
   },
   clearCount (states) {
     states.count = 0
+  },
+  setUserInfoCenter (states, userInfo) {
+    const tempData = deepCopy(states.userInfoCenter)
+    userInfo.forEach(item => {
+      if (!tempData.hasOwnProperty(item.id)) {
+        tempData[item.id] = {
+          avatar: item.avatar,
+          type: item.type,
+          username: item.username
+        }
+      }
+    })
+    states.userInfoCenter = tempData
+  },
+  updateUserInfoCenter (states, userInfo) {
+    if (!states.userInfoCenter.hasOwnProperty(userInfo)) {
+      states.userInfoCenter[userInfo.id] = {
+        avatar: userInfo.avatar,
+        type: userInfo.type,
+        username: userInfo.username
+      }
+    }
   }
 }
 

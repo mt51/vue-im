@@ -122,6 +122,7 @@
           return
         } else {
           this.store.states.mine = this.mine
+          this.store.commit('updateUserInfoCenter', this.mine)
           const localData = storage.readData('iminfo')
           const currentChat = storage.readData('currentChat')
           if (currentChat && currentChat.hostId === this.mine.id) {
@@ -147,7 +148,7 @@
           }
           storage.saveData('iminfo', tempData)
           const chatLogsList = tempData.chatList
-          this.store.states.localHistory = tempData.history
+          this.store.commit('setLocalHistory', tempData.history)
           this.store.commit('updateChatLogsList', chatLogsList)
         }
       },
@@ -212,6 +213,18 @@
             this.getMessage(newV)
           }
         }
+      },
+      lists: {
+        handler (newV) {
+          this.store.commit('setUserInfoCenter', newV)
+        },
+        deep: true
+      },
+      groupsList: {
+        handler (newV) {
+          this.store.commit('setUserInfoCenter', newV)
+        },
+        deep: true
       }
     },
     mounted () {

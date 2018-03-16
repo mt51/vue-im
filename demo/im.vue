@@ -1,23 +1,27 @@
 <template>
   <vue-im 
-    @page-change="pageChange"
     :lists="lists"
     :mine="mine"
     :history="history"
-    @chat-change="handleChange"
+    @on-chat-change="handleChange"
     @on-send="handleSend"
-    imageUpload
-    url="http://localhost:3000/upload"
+    action="http://localhost:3000/upload"
     :notice="true"
     ref="vueim"
     :groups-list="groups"
     :members-list="membersList"
     @on-view-members="handleViewMembers"
+    @on-add-group="handleAddGroup"
+    @on-page-change="handlePageChange"
+    @on-view-history="handleViewHistory"
+    :max-size="20"
+    :un-read-list="unReadList"
+    :chat="currentChat"
   ></vue-im>
 </template>
 <script>
   // import lists from './lists.js'
-  import { get } from '../src/util/ajax'
+  import axios from 'axios'
 
   export default {
     data () {
@@ -28,32 +32,34 @@
         sock: null,
         currentChat: {},
         groups: [],
-        membersList: []
+        membersList: [],
+        unReadList: []
       }
     },
     created () {
       let self = this
-      get({
-        url: 'http://localhost:3000/lists',
-        onSuccess (lists) {
+      axios.get('http://localhost:3000/lists')
+        .then(function (response) {
+          const lists = response.data
           self.lists = lists.list
           self.mine = lists.mine
-          self.history = lists.log
           self.currentChat = {
             'username': '贤心',
             'id': '100001',
             'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg'
           }
           self.groups = lists.groups
-        }
-      })
+        })
+      // axios.get('http://localhost:3000/new')
+      //   .then(function (response) {
+      //     self.unReadList = response.data
+      //   })
     },
     methods: {
-      handleChange () {
-        this.history = {}
+      handleChange (chat) {
+        console.log(chat)
       },
       handleSend (message) {
-        console.log(123)
         // let avatar
         // this.lists.forEach(function (item) {
         //   if (item.id === message.recver) {
@@ -61,33 +67,50 @@
         //   }
         // })
         this.$refs.vueim.getMessage({
-          content: `你好呀,我是${this.lists[5].username}`,
-          avatar: this.lists[5].avatar,
-          sender: this.lists[5].id,
+          content: `你好呀,我是${message.username}`,
+          avatar: message.avatar,
+          sender: message.id,
           recver: this.mine.id,
           time: new Date().getTime(),
-          sendername: this.lists[5].username,
+          sendername: message.username,
           recvername: this.mine.username,
-          type: 'text'
+          type: 'friend',
+          chatlogType: 'text'
         })
       },
-      pageChange (page) {
+      handlePageChange (page) {
+        console.log('----------------历史记录分页变化---------------------')
         console.log(page)
       },
       handleViewMembers () {
         let self = this
-        get({
-          url: 'http://localhost:3000/member',
-          onSuccess (data) {
-            self.membersList = data
-          }
-        })
+        axios.get('http://localhost:3000/member')
+          .then(function (response) {
+            self.membersList = response.data
+          })
+      },
+      handleAddGroup (data) {
+        console.log('----------------添加群组---------------------')
+        console.log(data)
+      },
+      handleViewHistory (data) {
+        console.log('----------------查看历史记录---------------------')
+        var self = this
+        axios.get('http://localhost:3000/history')
+          .then(function (response) {
+            self.history = response.data
+          })
       }
     },
     mounted () {
-      setTimeout(() => {
-        this.handleSend()
-      }, 5000)
+      // setTimeout(() => {
+      //   this.handleSend()
+      // }, 5000)
+
+      // setInterval(() => {
+      //   this.handleSend()
+      // }, 3000)
+
       // this.sock = new SockJS('http://localhost:3000/websock', null, {transports: 'websocket'})
       // this.sock.onopen = event => {
       //   console.log('open')

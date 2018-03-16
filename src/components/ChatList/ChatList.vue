@@ -3,10 +3,10 @@
     <ul class="list">
       <li class="list-item" v-for="(item, index) in lists" :key="index" @click="handleChatChange(item)" :class="{'current': currentChat && currentChat.id === item.id}">
         <div class="avatar">
-          <img :src="item.avatar">
+          <img :src="userAvatar(item.id)">
         </div>
         <div class="user">
-          <div class="username">{{item.username}}</div>
+          <div class="username">{{userName(item.id)}}</div>
           <div class="message" v-if="item.chatlogType === 'image'">图片</div>
           <div class="message" v-else-if="item.chatlogType === 'file'">文件</div>
           <div class="message" v-else v-html="item.chatlog"></div>
@@ -50,6 +50,20 @@
       },
       handleChatClose (index) {
         this.store.commit('removeChatLog', index)
+      },
+      userAvatar (id) {
+        if (!this.userInfoCenter[id]) {
+          return ''
+        } else {
+          return this.userInfoCenter[id].avatar
+        }
+      },
+      userName (id) {
+        if (!this.userInfoCenter[id]) {
+          return ''
+        } else {
+          return this.userInfoCenter[id].username
+        }
       }
     },
     filters: {
@@ -61,6 +75,9 @@
       },
       currentChat () {
         return this.store.states.currentChat
+      },
+      userInfoCenter () {
+        return this.store.states.userInfoCenter
       }
     }
   }
