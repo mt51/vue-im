@@ -15,7 +15,7 @@
 
         <div class="im-chat-wrapper" v-show="currentTab === 'chat'">
 
-          <ChatList :store="store" v-if="!brief"/>
+          <ChatList :store="store"/>
           <ChatBox
             :mine="mine"
             :ext="ext"
@@ -124,13 +124,17 @@
           this.store.states.mine = this.mine
           this.store.commit('updateUserInfoCenter', this.mine)
           const localData = storage.readData('iminfo')
-          const currentChat = storage.readData('currentChat')
+          let currentChat = storage.readData('currentChat')
           if (currentChat && currentChat.hostId === this.mine.id) {
             this.store.commit('setCurrentChat', currentChat)
           } else {
             this.store.commit('setCurrentChat', null)
           }
-          if (this.brief) {
+          if (this.brief && this.chat) {
+            console.log(this.chatLogsList)
+            this.chat.type = this.chat.type || 'friend'
+            currentChat = this.chat
+            this.store.commit('updateUserInfoCenter', this.chat)
             this.store.commit('setCurrentChat', this.chat)
             this.store.commit('setCurrentTab', 'chat')
           }
@@ -147,7 +151,15 @@
             tempData.chatList = []
           }
           storage.saveData('iminfo', tempData)
-          const chatLogsList = tempData.chatList
+          let chatLogsList = tempData.chatList
+          if (currentChat !== null) {
+            const flag = chatLogsList.find(item => {
+              return item.id === currentChat.id
+            })
+            if (!flag) {
+              chatLogsList.unshift(currentChat)
+            }
+          }
           this.store.commit('setLocalHistory', tempData.history)
           this.store.commit('updateChatLogsList', chatLogsList)
         }

@@ -198,7 +198,8 @@
           time: new Date().getTime(),
           sendername: this.mine.username,
           recvername: this.currentChatInfo.username,
-          id: this.currentChat.id
+          id: this.currentChat.id,
+          type: this.currentChat.type
         })
         this.handleScroll()
         this.sendMessage = ''
@@ -245,10 +246,20 @@
         } else {
           return this.userInfoCenter[userId].avatar
         }
+      },
+      userName (userId) {
+        if (!this.userInfoCenter[userId]) {
+          return ''
+        } else {
+          return this.userInfoCenter[userId].username
+        }
       }
     },
     mounted () {
       this.target = this.$parent.$refs.imdrag
+      this.$nextTick(() => {
+        this.handleScroll()
+      })
     },
     computed: {
       userInfoCenter () {
