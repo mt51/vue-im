@@ -69,6 +69,7 @@
         this.$parent.$parent.handlePageChange(page)
       },
       makeCloneHistory () {
+        if (this.history && !this.records) return
         let history = deepCopy(this.history)
         history.records.forEach(item => {
           item.mine = item.sender === this.mine.id
@@ -87,7 +88,8 @@
         handler () {
           this.cloneHistory = this.makeCloneHistory()
         },
-        deep: true
+        deep: true,
+        immediate: true
       }
     }
   }

@@ -83,7 +83,6 @@
     },
     computed: {
       lists () {
-        console.log(this.store.states.chatLogsList)
         return this.store.states.chatLogsList
       },
       currentChat () {
