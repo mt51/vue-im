@@ -16,11 +16,11 @@
     @on-view-history="handleViewHistory"
     :max-size="20"
     :un-read-list="unReadList"
-    :chat="currentChat"
+    brief
+    :chat="chat"
   ></vue-im>
 </template>
 <script>
-  // import lists from './lists.js'
   import axios from 'axios'
 
   export default {
@@ -33,29 +33,32 @@
         currentChat: {},
         groups: [],
         membersList: [],
-        unReadList: []
+        unReadList: [],
+        chat: null
       }
     },
     created () {
-      let self = this
-      axios.get('http://localhost:3000/lists')
-        .then(function (response) {
-          const lists = response.data
-          self.lists = lists.list
-          self.mine = lists.mine
-          self.currentChat = {
-            'username': '贤心',
-            'id': '100001',
-            'avatar': '//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg'
-          }
-          self.groups = lists.groups
-        })
-      // axios.get('http://localhost:3000/new')
-      //   .then(function (response) {
-      //     self.unReadList = response.data
-      //   })
+      this.fetchUserList()
+      this.fetchMineInfo()
     },
     methods: {
+      fetchUserList () {
+        const self = this
+        axios.get('http://localhost:3000/api/user/lists')
+        .then(function (response) {
+          const lists = response.data
+          self.lists = lists.data
+        })
+      },
+      fetchMineInfo () {
+        const self = this
+        axios.get('http://localhost:3000/api/user/info/100000')
+        .then(function (response) {
+          const userInfo = response.data
+          self.mine = userInfo.data[0]
+          console.log(self.mine)
+        })
+      },
       handleChange (chat) {
         console.log(chat)
       },
@@ -82,27 +85,20 @@
         console.log('----------------历史记录分页变化---------------------')
         console.log(page)
       },
-      handleViewMembers () {
-        let self = this
-        axios.get('http://localhost:3000/member')
-          .then(function (response) {
-            self.membersList = response.data
-          })
-      },
-      handleAddGroup (data) {
-        console.log('----------------添加群组---------------------')
-        console.log(data)
-      },
       handleViewHistory (data) {
         console.log('----------------查看历史记录---------------------')
         var self = this
-        axios.get('http://localhost:3000/history')
+        console.log(data)
+        axios.get('http://localhost:3000/api/log/lists')
           .then(function (response) {
             self.history = response.data
           })
       }
     },
     mounted () {
+      setTimeout(() => {
+        this.chat = this.currentChat
+      }, 0)
       // setTimeout(() => {
       //   this.handleSend()
       // }, 5000)
