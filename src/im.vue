@@ -130,7 +130,7 @@
           } else {
             this.store.commit('setCurrentChat', null)
           }
-          if (this.brief && this.chat) {
+          if (this.brief && this.chat && this.chat.id) {
             this.chat.type = this.chat.type || 'friend'
             currentChat = this.chat
             this.store.commit('updateUserInfoCenter', this.chat)
@@ -234,6 +234,17 @@
       groupsList: {
         handler (newV) {
           this.store.commit('setUserInfoCenter', newV)
+        },
+        deep: true
+      },
+      chat: {
+        handler: function () {
+          if (this.brief && this.chat && this.chat.id) {
+            this.chat.type = this.chat.type || 'friend'
+            this.store.commit('updateUserInfoCenter', this.chat)
+            this.store.commit('setCurrentChat', this.chat)
+            this.store.commit('setCurrentTab', 'chat')
+          }
         },
         deep: true
       }
