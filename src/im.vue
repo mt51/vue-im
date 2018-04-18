@@ -131,7 +131,6 @@
             this.store.commit('setCurrentChat', null)
           }
           if (this.brief && this.chat) {
-            console.log(this.chatLogsList)
             this.chat.type = this.chat.type || 'friend'
             currentChat = this.chat
             this.store.commit('updateUserInfoCenter', this.chat)
@@ -152,7 +151,7 @@
           }
           storage.saveData('iminfo', tempData)
           let chatLogsList = tempData.chatList
-          if (currentChat !== null) {
+          if (currentChat !== null && currentChat !== undefined) {
             const flag = chatLogsList.find(item => {
               return item.id === currentChat.id
             })
