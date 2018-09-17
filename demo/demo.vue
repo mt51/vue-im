@@ -6,11 +6,13 @@
     :friends="friends"
     :currentChat="currentChat"
     :un-read-list="newMsg"
+    :groups-list="groups"
   ></vue-im>
 </template>
 <script>
 import axios from 'axios'
 import SockJS from 'sockjs-client'
+
 export default {
   data() {
     return {
@@ -29,36 +31,23 @@ export default {
   },
   created() {
     this.fetchUserList()
-    this.fetchChatlog()
-    axios
-      .all([
-        this.fetchMineInfo(),
-        this.fetchcurrentChat()
-      ])
-      .then(
-        axios.spread((acct, perms) => {
-          this.mine = acct.data
-          this.currentChat = perms.data
-          this.$nextTick(() => {
-            this.$refs.vueim.initIM()
-          })
-        })
-      )
+    this.fetchGroupList()
   },
   methods: {
     fetchUserList() {
       const self = this
       axios
-        .get('/userlist')
+        .get('/users')
         .then(function(response) {
-          self.friends = response.data
+          self.friends = response.data.data
         })
     },
-    fetchcurrentChat () {
-      return axios.get('/chatWith')
-    },
-    fetchMineInfo() {
-      return axios.get('/mine')
+    fetchGroupList () {
+      axios
+        .get('/groups')
+        .then(function(response) {
+          self.groups = response.data.data
+        })
     },
     handleChange(chat) {
       console.log(chat)
