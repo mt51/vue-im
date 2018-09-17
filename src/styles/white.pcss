@@ -1,0 +1,129 @@
+:root {
+  --mainBgColor: #e45050;
+  --searchInputBgColor: #fff;
+  --searchInputBdColor: #999;
+  --searchInputTextColor: #a6b5d7;
+  --topToolItemColor: #999;
+  --middleBgColor: #fff;
+  --middleBdColor: #ccc;
+  --middleItemTextColor: #363e47;
+  --contactLeftBgColor: #fff;
+  --contactLeftBdColor: #ccc;
+  --contactLeftTextColor: #363e47;
+  --contactTabBdColor: #2f363e;
+  --contactFGActiveBgColor: #f5f5f5;
+  --contactFIActiveBgColor: #d5d5d5;
+}
+
+.white {
+  & .im-header {
+    background: #fff;
+    border: 1px solid #ccc;
+    & .top-search {
+     & .search-box {
+       background: var(--searchInputBgColor);
+       color: var(--searchInputTextColor);
+       border: 1px solid var(--searchInputBdColor);
+     }
+      & button{
+        background: var(--searchInputBgColor);
+        color: var(--searchInputTextColor);
+      }
+    }
+    & .im-tools-item:hover .btn {
+       color: var(--mainBgColor);
+    }
+    & .im-tab-item {
+      &:hover .btn {
+        color: var(--mainBgColor);
+      }
+      & .ti-arrow {
+        color: var(--mainBgColor);
+      }
+    }
+    & .btn {
+      background: transparent;
+      color: var(--topToolItemColor);
+    }
+    & .active .btn{
+      color: var(--mainBgColor);
+    }
+  }
+  & .middle{
+    background: var(--middleBgColor);
+    border-right: 1px solid var(--middleBdColor);
+    & .list{
+      & .list-item{
+        &:hover, &.current{
+          background: #f5f5f5;
+        }
+      }
+      & .user{
+        & .username {
+          color: var(--middleItemTextColor);
+        }
+        & .message{
+          color: var(--middleItemTextColor);
+        }
+      }
+      & .time{
+        color: var(--middleItemTextColor);
+      }
+    }
+    & .chat-close:hover {
+      background: var(--mainBgColor);
+    }
+  }
+  & .im-contacts {
+    & .contact-left {
+      background: #fff;
+      color: var(--contactLeftTextColor);
+      border-right: 1px solid var(--contactLeftBdColor);
+    }
+    & .contact-tab {
+      border-bottom: 1px solid contactTabBdColor;
+    }
+    & .concat-item {
+      & .line {
+        border-bottom: 2px solid transparent;
+      }
+      &:hover>.line, &.active>.line {
+        border-bottom: 2px solid var(--mainBgColor);
+      }
+    }
+  }
+  & .contact-card .cc-send {
+    background: var(--mainBgColor);
+  }
+  & .friends {
+    & .friends-group:hover{
+      background: var(--contactFGActiveBgColor);
+    }
+    & .fg-item:hover {
+      background: var(--contactFIActiveBgColor);
+    }
+  }
+
+  & .gg-list-container {
+    & .gg-item:hover {
+      background: var(--contactFGActiveBgColor);
+    }
+    & .gg-add-new {
+      background: var(--mainBgColor)!important;
+      color: #fff;
+    }
+  }
+
+  .chat-box{
+    .tool-bar-item:hover{
+      color: var(--mainBgColor)!important;
+    }
+    .send-btn {
+      background: var(--mainBgColor);
+      color: #fff;
+    }
+    .send-btn:hover {
+      background: #e7e7e7;
+    }
+  }
+}
