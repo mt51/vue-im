@@ -1,0 +1,108 @@
+.chatlog {
+  width: 350px;
+  overflow: hidden;
+  & .chatlog-wrap {
+    width: 100%;
+    height: 100%;
+    border-left: 1px solid rgba(0,0,0,.14);
+    background: #fff;
+    & .title {
+      height: 40px;
+      line-height: 40px;
+      background: #fff;
+      font-size: 14px;
+      padding: 0 15px;
+      border-bottom: 1px solid #e7e7e7;
+      & .close {
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+  }
+  & .log-list{
+    margin: 0 auto 30px;
+    padding: 0 10px;
+    height: 100%;
+    overflow: auto;
+  }
+  & .log-item{
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+  }
+  & .avatar{
+    float: left;
+    width: 30px;
+    height: 30px;
+    & img{
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+  }
+  & .message{
+    display: inline-block;
+    margin: 4px 15px;
+    padding: 3px 5px;
+    font-size: 14px;
+    background: #fff;
+    font-size: 12px;
+  }
+  & .mine {
+    overflow: hidden;
+    padding-right: 10px;
+    text-align: right;
+    & .avatar{
+      float: right;
+    }
+  }
+  & .time {
+    text-align: center;
+    span {
+      font-size: 12px;
+      display: inline-block;
+      padding: 3px 8px;
+      color: #000;
+      border-radius: 3px;
+    }
+  }
+  & .page {
+    position: sticky;
+    width: 100%;
+    background: #fff;
+    bottom: 0;
+    height: 33px;
+    & .rs-pagination{
+      text-align: right;
+    }
+    & .rs-pagination .pagination{
+      margin: 0;
+    }
+  }
+  & .down-link {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover .down-link-file {
+      text-decoration: underline;
+    }
+  }
+  & .down-link-icon {
+    font-size: 30px;
+  }
+  & .down-link-file {
+    display: inline-block;
+    margin-left: 10px;
+  }
+}
+.collapse-enter-active, .collapse-leave-active {
+  transition: all 0.5s;
+}
+.collapse-enter, .collapse-leave-to {
+  width: 0;
+  transform: translate3d(350px);
+}

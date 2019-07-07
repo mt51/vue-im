@@ -1,7 +1,13 @@
 {
   "name": "vue-im",
-  "version": "0.1.0",
+  "version": "3.0.0",
   "private": true,
+  "author": "liuziyang <798230885@qq.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lzy1043/vue-im.git"
+  },
+  "main": "dist/vue-im.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -10,7 +16,12 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "babel-polyfill": "^6.26.0",
+    "dayjs": "^1.6.4",
+    "element-ui": "^2.3.7",
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
@@ -36,5 +47,14 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
