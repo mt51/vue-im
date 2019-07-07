@@ -7,16 +7,32 @@
           <span class="close" @click="handleHistoryVisible">&times;</span>
         </div>
         <ul class="log-list">
-          <li class="log-item" v-for="(item, index) in cloneHistory" :key="index" :class="{'mine': item.mine}">
-            <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate(true) }}</span></div>
+          <li
+            class="log-item"
+            v-for="(item, index) in cloneHistory"
+            :key="index"
+            :class="{ mine: item.mine }"
+          >
+            <div class="time" v-if="handleTimeVisible(item, index)">
+              <span>{{ item.time | formatDate(true) }}</span>
+            </div>
             <div class="avatar">
-              <img :src="item.avatar">
+              <img :src="item.avatar" />
             </div>
-            <div class="message message-image" v-if="item.chatlogType === 'image'">
-              <img :src="item.content">
+            <div
+              class="message message-image"
+              v-if="item.chatlogType === 'image'"
+            >
+              <img :src="item.content" />
             </div>
-            <div class="message message-file" v-else-if="item.chatlogType === 'file'">
-              <a class="down-link" :href="item.content.src" download><i class="fa fa-cloud-download down-link-icon"></i><span class="down-link-file">{{item.content.name}}</span></a>
+            <div
+              class="message message-file"
+              v-else-if="item.chatlogType === 'file'"
+            >
+              <a class="down-link" :href="item.content.src" download
+                ><i class="fa fa-cloud-download down-link-icon"></i
+                ><span class="down-link-file">{{ item.content.name }}</span></a
+              >
             </div>
             <div class="message" v-else v-html="item.content"></div>
           </li>
@@ -26,7 +42,8 @@
             layout="prev, pager, next"
             :total="history.total || 0"
             :page-size="history.size"
-            @current-change="handlePageChange">
+            @current-change="handlePageChange"
+          >
           </el-pagination>
         </div>
       </div>
@@ -98,5 +115,4 @@ export default {
   }
 }
 </script>
-<style>
-</style>
+<style></style>

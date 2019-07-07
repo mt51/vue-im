@@ -14,7 +14,7 @@
 <script>
 export default {
   name: 'login',
-  data () {
+  data() {
     return {
       formData: {
         account: '100001',
@@ -23,16 +23,15 @@ export default {
     }
   },
   methods: {
-    handleClickLogin () {
-      this.axios.post('/login', this.formData)
-        .then(res => {
-          const { code, data } = res.data
-          if (code === 0) {
-            window.localStorage.setItem('token', data.token)
-            window.localStorage.setItem('userId', this.formData.account)
-            this.$router.push('/')
-          }
-        })
+    handleClickLogin() {
+      this.axios.post('/login', this.formData).then(res => {
+        const { code, data } = res.data
+        if (code === 0) {
+          window.localStorage.setItem('token', data.token)
+          window.localStorage.setItem('userId', this.formData.account)
+          this.$router.push('/')
+        }
+      })
     }
   }
 }
@@ -47,10 +46,9 @@ export default {
   align-items: center;
   & .login-box {
     width: 400px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     text-align: center;
     padding: 40px;
   }
 }
 </style>
-

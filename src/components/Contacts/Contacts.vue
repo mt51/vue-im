@@ -3,17 +3,37 @@
     <div class="contact-left">
       <div class="contact-tab">
         <ul class="contact-list">
-          <li class="concat-item" :class="{'active': contactTab === 'friend'}" @click="handleContact('friend')"><span>好友</span><span class="line"></span></li>
-          <li class="concat-item" :class="{'active': contactTab === 'group'}" @click="handleContact('group')"><span>群组</span><span class="line"></span></li>
+          <li
+            class="concat-item"
+            :class="{ active: contactTab === 'friend' }"
+            @click="handleContact('friend')"
+          >
+            <span>好友</span><span class="line"></span>
+          </li>
+          <li
+            class="concat-item"
+            :class="{ active: contactTab === 'group' }"
+            @click="handleContact('group')"
+          >
+            <span>群组</span><span class="line"></span>
+          </li>
           <li class="hover_line"></li>
         </ul>
       </div>
       <div class="contact-content">
         <!-- <GroupList :groups-list="groupsList" :lists="friendsList" v-show="contactTab === 'group'" /> -->
-        <FriendList :friends="friends" :store="store" v-show="contactTab === 'friend'" />
+        <FriendList
+          :friends="friends"
+          :store="store"
+          v-show="contactTab === 'friend'"
+        />
       </div>
     </div>
-    <ContactCard :store="store" :contact="currentContact" :members-list="membersList" />
+    <ContactCard
+      :store="store"
+      :contact="currentContact"
+      :members-list="membersList"
+    />
   </div>
 </template>
 <script>

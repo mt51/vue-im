@@ -36,18 +36,14 @@ export default {
   methods: {
     fetchUserList() {
       const self = this
-      axios
-        .get('/users')
-        .then(function(response) {
-          self.friends = response.data.data
-        })
+      axios.get('/users').then(function(response) {
+        self.friends = response.data.data
+      })
     },
-    fetchGroupList () {
-      axios
-        .get('/groups')
-        .then(function(response) {
-          self.groups = response.data.data
-        })
+    fetchGroupList() {
+      axios.get('/groups').then(function(response) {
+        self.groups = response.data.data
+      })
     },
     handleChange(chat) {
       console.log(chat)
@@ -90,18 +86,15 @@ export default {
         })
     },
     fetchChatlog() {
-      axios.get('/newMsg')
-        .then(res => {
-          this.newMsg = res.data
-        })
+      axios.get('/newMsg').then(res => {
+        this.newMsg = res.data
+      })
     }
   },
   mounted() {
-    this.sock = new SockJS(
-      'http://localhost:3000/websocket?',
-      null,
-      { transports: 'websocket' }
-    )
+    this.sock = new SockJS('http://localhost:3000/websocket?', null, {
+      transports: 'websocket'
+    })
     this.sock.onopen = event => {
       console.log('open')
     }

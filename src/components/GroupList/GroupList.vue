@@ -1,10 +1,16 @@
 <template>
   <div class="gg-list-container">
-    <ul class='gg-list'>
+    <ul class="gg-list">
       <li class="gg-empty" v-if="groupsList.length === 0">暂无群组信息</li>
-      <li class='gg-item' v-for='(group, gindex) in groupsList' :key='gindex' @click="handleGroupItemClick(group)" v-else>
-        <img class='gg-avatar' :src='group.avatar'>
-        <span class='gg-name'>{{group.groupname}}</span>
+      <li
+        class="gg-item"
+        v-for="(group, gindex) in groupsList"
+        :key="gindex"
+        @click="handleGroupItemClick(group)"
+        v-else
+      >
+        <img class="gg-avatar" :src="group.avatar" />
+        <span class="gg-name">{{ group.groupname }}</span>
       </li>
     </ul>
     <div class="gg-add-new" @click="handledialogVisible">+</div>
@@ -13,14 +19,24 @@
         <label class="label">请输入群组名称</label>
         <el-input v-model="groupname"></el-input>
       </div>
-      <el-transfer v-model="checkedUsers" :titles="titles" :data="cloneList"  filterable :filter-method="filterMethod" filter-placeholder="请输入用户名"></el-transfer>
+      <el-transfer
+        v-model="checkedUsers"
+        :titles="titles"
+        :data="cloneList"
+        filterable
+        :filter-method="filterMethod"
+        filter-placeholder="请输入用户名"
+      ></el-transfer>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="handleCreateNewGroup">确认</el-button>
-        <el-button size="small" type="info" @click="handledialogVisible">取消</el-button>
+        <el-button size="small" type="primary" @click="handleCreateNewGroup"
+          >确认</el-button
+        >
+        <el-button size="small" type="info" @click="handledialogVisible"
+          >取消</el-button
+        >
       </div>
     </el-dialog>
   </div>
-
 </template>
 <script>
 export default {
@@ -113,5 +129,4 @@ export default {
   }
 }
 </script>
-<style>
-</style>
+<style></style>

@@ -1,16 +1,31 @@
 <template>
   <ul class="friends">
     <li class="fg-empty" v-if="cloneFriends.length === 0">暂无好友分组</li>
-    <li class="friends-group" v-for="(group, index) in cloneFriends" :key="index" v-else>
+    <li
+      class="friends-group"
+      v-for="(group, index) in cloneFriends"
+      :key="index"
+      v-else
+    >
       <h5 class="fg-title" @click="toggleListOpen(group)">
-        <i class="fa fa-caret-right fg-caret" :class="{'open': group.isOpen}"></i>
-        <span class="fg-group-name">{{group.groupname}}</span>
+        <i
+          class="fa fa-caret-right fg-caret"
+          :class="{ open: group.isOpen }"
+        ></i>
+        <span class="fg-group-name">{{ group.groupname }}</span>
       </h5>
       <ul class="fg-list" v-if="group.isOpen">
-        <li class="fg-empty" v-if="!group.list || group.list.length === 0">该分组下暂无好友</li>
-        <li class="fg-item" v-for="(friend, findex) in group.list" :key="findex" @click="handleUserItemClick(friend)">
-          <img class="fg-avatar" :src="friend.avatar">
-          <span class="fg-username">{{friend.username}}</span>
+        <li class="fg-empty" v-if="!group.list || group.list.length === 0">
+          该分组下暂无好友
+        </li>
+        <li
+          class="fg-item"
+          v-for="(friend, findex) in group.list"
+          :key="findex"
+          @click="handleUserItemClick(friend)"
+        >
+          <img class="fg-avatar" :src="friend.avatar" />
+          <span class="fg-username">{{ friend.username }}</span>
         </li>
       </ul>
     </li>
