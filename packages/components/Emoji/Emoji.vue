@@ -15,15 +15,15 @@ export default {
   data() {
     return {
       emojiVisible: false
-    }
+    };
   },
   methods: {
     handleSendEmoji(index) {
-      this.$parent.handleEmojiVisible(false)
-      this.$parent.handleSendEmoji(index)
+      this.$parent.handleEmojiVisible(false);
+      this.$parent.handleSendEmoji(index);
     }
   }
-}
+};
 </script>
 <style>
 @import url('./index.pcss');

@@ -1,5 +1,5 @@
 export function typeOf(data) {
-  const toString = Object.prototype.toString
+  const toString = Object.prototype.toString;
   const map = {
     '[object Boolean]': 'boolean',
     '[object Number]': 'number',
@@ -11,39 +11,39 @@ export function typeOf(data) {
     '[object Undefined]': 'undefined',
     '[object Null]': 'null',
     '[object Object]': 'object'
-  }
-  return map[toString.call(data)]
+  };
+  return map[toString.call(data)];
 }
 
 export function deepCopy(data) {
-  const t = typeOf(data)
-  let o
+  const t = typeOf(data);
+  let o;
   if (t === 'array') {
-    o = []
+    o = [];
   } else if (t === 'object') {
-    o = {}
+    o = {};
   } else {
-    return data
+    return data;
   }
   if (t === 'array') {
     for (let i = 0; i < data.length; i++) {
-      o.push(deepCopy(data[i]))
+      o.push(deepCopy(data[i]));
     }
   } else if (t === 'object') {
     for (let i in data) {
-      o[i] = deepCopy(data[i])
+      o[i] = deepCopy(data[i]);
     }
   }
-  return o
+  return o;
 }
 
 export function device() {
-  const agent = navigator.userAgent.toLowerCase()
+  const agent = navigator.userAgent.toLowerCase();
   return !!window.ActiveXObject || 'ActiveXObject' in window
     ? (agent.match(/msie\s(\d+)/) || [])[1] || '11'
-    : false
+    : false;
 }
 
 export function objIsEmpty(obj) {
-  return Object.keys(obj).length === 0
+  return Object.keys(obj).length === 0;
 }

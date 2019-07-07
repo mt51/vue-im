@@ -25,7 +25,7 @@
           <p>{{item.username}}</p>
         </li>
       </ul>
-    </div> -->
+    </div>-->
     <ul class="im-tab" v-if="!brief">
       <li
         class="im-tab-item tab-chatlist"
@@ -37,7 +37,9 @@
         <button class="btn btn-chatlist">
           <i class="fa fa-comment-o"></i>
         </button>
-        <p class="ti-arrow"><i class="fa fa-caret-up"></i></p>
+        <p class="ti-arrow">
+          <i class="fa fa-caret-up"></i>
+        </p>
       </li>
       <li
         class="im-tab-item tab-userlist"
@@ -45,8 +47,12 @@
         title="联系人列表"
         @click="handleCurrentTab('user')"
       >
-        <button class="btn btn-userlist"><i class="fa fa-users"></i></button>
-        <p class="ti-arrow"><i class="fa fa-caret-up"></i></p>
+        <button class="btn btn-userlist">
+          <i class="fa fa-users"></i>
+        </button>
+        <p class="ti-arrow">
+          <i class="fa fa-caret-up"></i>
+        </p>
       </li>
     </ul>
     <ul class="im-tools">
@@ -85,49 +91,51 @@ export default {
       keyword: '',
       skinVisible: false,
       searchVisible: false
-    }
+    };
   },
   methods: {
     handleCurrentTab(type) {
       if (this.currentTab !== type) {
-        this.store.commit('setCurrentTab', type)
+        this.store.commit('setCurrentTab', type);
       }
     },
     handleSkinVisible() {
-      this.skinVisible = !this.skinVisible
+      this.skinVisible = !this.skinVisible;
     },
     handleSkinChange(skin) {
-      this.handleSkinVisible()
+      this.handleSkinVisible();
       if (this.skin !== skin) {
-        this.store.commit('setSkin', skin)
+        this.store.commit('setSkin', skin);
       }
     },
     handleSRVisible() {
-      this.searchVisible = !this.searchVisible
+      this.searchVisible = !this.searchVisible;
     },
     handleClickSearchItem(item) {
-      this.store.commit('setCurrentChat', item)
-      this.store.commit('setCurrentTab', 'chat')
-      this.store.commit('updateChatLogsList', item)
-      this.searchVisible = !this.searchVisible
+      this.store.commit('setCurrentChat', item);
+      this.store.commit('setCurrentTab', 'chat');
+      this.store.commit('updateChatLogsList', item);
+      this.searchVisible = !this.searchVisible;
     }
   },
   computed: {
     skin() {
-      return this.store.states.skin
+      return this.store.states.skin;
     },
     currentTab() {
-      return this.store.states.currentTab
+      return this.store.states.currentTab;
     },
     count() {
-      return this.store.states.count
+      return this.store.states.count;
     },
     searchResult() {
-      if (this.keyword === '') return []
-      return this.lists.filter(item => item.username.indexOf(this.keyword) > -1)
+      if (this.keyword === '') return [];
+      return this.lists.filter(
+        item => item.username.indexOf(this.keyword) > -1
+      );
     }
   }
-}
+};
 </script>
 <style>
 @import url('./index.pcss');

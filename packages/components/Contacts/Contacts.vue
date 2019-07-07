@@ -8,20 +8,26 @@
             :class="{ active: contactTab === 'friend' }"
             @click="handleContact('friend')"
           >
-            <span>好友</span><span class="line"></span>
+            <span>好友</span>
+            <span class="line"></span>
           </li>
           <li
             class="concat-item"
             :class="{ active: contactTab === 'group' }"
             @click="handleContact('group')"
           >
-            <span>群组</span><span class="line"></span>
+            <span>群组</span>
+            <span class="line"></span>
           </li>
           <li class="hover_line"></li>
         </ul>
       </div>
       <div class="contact-content">
-        <!-- <GroupList :groups-list="groupsList" :lists="friendsList" v-show="contactTab === 'group'" /> -->
+        <GroupList
+          :groups-list="groupsList"
+          :lists="friendsList"
+          v-show="contactTab === 'group'"
+        />
         <FriendList
           :friends="friends"
           :store="store"
@@ -37,9 +43,9 @@
   </div>
 </template>
 <script>
-import GroupList from '@/components/GroupList/GroupList'
-import FriendList from '@/components/FriendList/FriendList'
-import ContactCard from '@/components/Contacts/ContactCard'
+import GroupList from '../GroupList/GroupList';
+import FriendList from '../FriendList/FriendList';
+import ContactCard from '../Contacts/ContactCard';
 export default {
   name: 'Contacts',
   props: {
@@ -47,7 +53,7 @@ export default {
     groupsList: {
       type: Array,
       default() {
-        return []
+        return [];
       }
     },
     friends: Array,
@@ -57,31 +63,31 @@ export default {
     return {
       contactTab: 'friend',
       currentContact: null
-    }
+    };
   },
   methods: {
     handleContact(type) {
-      this.contactTab = type
+      this.contactTab = type;
     },
     handleCurrentConcatChange(contact) {
-      this.currentContact = contact
+      this.currentContact = contact;
       if (contact.type === 'group') {
-        this.$emit('on-view-members', contact)
+        this.$emit('on-view-members', contact);
       }
     },
     handleCreateNewGroup(data) {
-      this.$emit('on-add-group', data)
+      this.$emit('on-add-group', data);
     },
     handleOpenChatBox(contact) {
-      delete contact.key
-      delete contact.label
-      this.store.commit('setCurrentChat', contact.id)
-      this.store.commit('setCurrentTab', 'chat')
-      this.store.commit('updateChatLog', contact)
+      delete contact.key;
+      delete contact.label;
+      this.store.commit('setCurrentChat', contact.id);
+      this.store.commit('setCurrentTab', 'chat');
+      this.store.commit('updateChatLog', contact);
     }
   },
   mounted() {
-    console.log(this.friends)
+    console.log(this.friends);
   },
   components: {
     GroupList,
@@ -92,9 +98,9 @@ export default {
     return {
       handleOpenChatBox: this.handleOpenChatBox,
       handleCurrentConcatChange: this.handleCurrentConcatChange
-    }
+    };
   }
-}
+};
 </script>
 <style>
 @import url('./index.pcss');

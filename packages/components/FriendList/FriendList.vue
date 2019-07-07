@@ -32,7 +32,7 @@
   </ul>
 </template>
 <script>
-import { typeOf } from '@/util/utils'
+import { typeOf } from '../../util/utils';
 export default {
   name: 'UserList',
   props: {
@@ -43,60 +43,60 @@ export default {
     return {
       cloneFriends: [],
       clickCount: 0
-    }
+    };
   },
   methods: {
     makeCloneFriends() {
-      let data = []
+      let data = [];
       let tempData = {
         groupname: '未命名分组',
         id: 100000000,
         list: []
-      }
+      };
       this.friends.forEach(item => {
         if (!item.groupname) {
-          tempData.list.push(item)
+          tempData.list.push(item);
         } else {
-          data.push(item)
+          data.push(item);
         }
-      })
-      data.push(tempData)
+      });
+      data.push(tempData);
       data.map(item => {
-        item.isOpen = false
-      })
-      return data
+        item.isOpen = false;
+      });
+      return data;
     },
     toggleListOpen(group) {
-      group.isOpen = !group.isOpen
+      group.isOpen = !group.isOpen;
     },
     handleUserItemClick(contact) {
-      contact.type = 'friend'
-      this.clickCount++
+      contact.type = 'friend';
+      this.clickCount++;
       setTimeout(() => {
         if (this.clickCount >= 2) {
-          this.handleOpenChatBox(contact)
+          this.handleOpenChatBox(contact);
         } else {
-          this.handleCurrentConcatChange(contact)
+          this.handleCurrentConcatChange(contact);
         }
-        this.clickCount = 0
-      }, 200)
+        this.clickCount = 0;
+      }, 200);
     }
   },
   watch: {
     friends: {
       handler: function(nv) {
         if (typeOf(nv) === 'array') {
-          this.cloneFriends = this.makeCloneFriends()
+          this.cloneFriends = this.makeCloneFriends();
           nv.forEach(c => {
-            this.store.commit('updateUserInfoCenter', c)
-          })
+            this.store.commit('updateUserInfoCenter', c);
+          });
         }
       },
       immediate: true
     }
   },
   inject: ['handleOpenChatBox', 'handleCurrentConcatChange']
-}
+};
 </script>
 <style scoped>
 @import url('./index.pcss');
