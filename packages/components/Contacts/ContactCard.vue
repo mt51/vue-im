@@ -39,7 +39,7 @@
   </div>
 </template>
 <script>
-import { deepCopy } from '@/util/utils'
+import { deepCopy } from '../../util/utils';
 export default {
   props: {
     contact: Object,
@@ -47,12 +47,12 @@ export default {
   },
   methods: {
     handleOpenChatBox() {
-      const temp = deepCopy(this.contact)
-      temp.username = temp.username || temp.groupname
-      this.$parent.handleOpenChatBox(temp)
+      const temp = deepCopy(this.contact);
+      temp.username = temp.username || temp.groupname;
+      this.$parent.handleOpenChatBox(temp);
     }
   }
-}
+};
 </script>
 <style>
 @import url('./card.pcss');

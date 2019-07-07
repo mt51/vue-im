@@ -29,10 +29,10 @@
               class="message message-file"
               v-else-if="item.chatlogType === 'file'"
             >
-              <a class="down-link" :href="item.content.src" download
-                ><i class="fa fa-cloud-download down-link-icon"></i
-                ><span class="down-link-file">{{ item.content.name }}</span></a
-              >
+              <a class="down-link" :href="item.content.src" download>
+                <i class="fa fa-cloud-download down-link-icon"></i>
+                <span class="down-link-file">{{ item.content.name }}</span>
+              </a>
             </div>
             <div class="message" v-else v-html="item.content"></div>
           </li>
@@ -43,8 +43,7 @@
             :total="history.total || 0"
             :page-size="history.size"
             @current-change="handlePageChange"
-          >
-          </el-pagination>
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -52,8 +51,8 @@
 </template>
 
 <script>
-import { formatDate } from '@/filters/filters'
-import { deepCopy } from '@/util/utils.js'
+import { formatDate } from '../../filters/filters';
+import { deepCopy } from '../../util/utils';
 export default {
   name: 'chatlog',
   props: {
@@ -68,12 +67,12 @@ export default {
     return {
       visible: this.value,
       cloneHistory: []
-    }
+    };
   },
   methods: {
     handleTimeVisible(item, index) {
       if (index === 0) {
-        return true
+        return true;
       } else {
         // return (
         //   this.history.records[index].time -
@@ -83,19 +82,19 @@ export default {
       }
     },
     handleHistoryVisible() {
-      this.visible = false
-      this.$emit('input', this.visible)
+      this.visible = false;
+      this.$emit('input', this.visible);
     },
     handlePageChange(page) {
-      this.$parent.$parent.handlePageChange(page)
+      this.$parent.$parent.handlePageChange(page);
     },
     makeCloneHistory() {
-      if (this.history && !this.history.records) return
-      let history = deepCopy(this.history)
+      if (this.history && !this.history.records) return;
+      let history = deepCopy(this.history);
       // history.records.forEach(item => {
       //   item.mine = item.sender === this.mine.id
       // })
-      return history
+      return history;
     }
   },
   filters: {
@@ -103,16 +102,16 @@ export default {
   },
   watch: {
     value(newV) {
-      this.visible = newV
+      this.visible = newV;
     },
     history: {
       handler() {
-        this.cloneHistory = this.makeCloneHistory()
+        this.cloneHistory = this.makeCloneHistory();
       },
       deep: true,
       immediate: true
     }
   }
-}
+};
 </script>
 <style></style>

@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-import { formatDate } from '@/filters/filters'
+import { formatDate } from '../../filters/filters';
 export default {
   name: 'middle',
   props: {
@@ -45,34 +45,34 @@ export default {
   data() {
     return {
       clearVisible: false
-    }
+    };
   },
   methods: {
     handleChatChange(item) {
-      this.store.commit('setCurrentChat', item.id)
+      this.store.commit('setCurrentChat', item.id);
       if (item.count !== 0) {
-        item.count = 0
-        this.store.commit('removeNewMsgList', item.id)
+        item.count = 0;
+        this.store.commit('removeNewMsgList', item.id);
       }
     },
     handleClearSearch() {
       if (this.keyword !== '') {
-        this.keyword = ''
-        this.$parent.handleClearSearch()
+        this.keyword = '';
+        this.$parent.handleClearSearch();
       }
-      this.clearVisible = false
+      this.clearVisible = false;
     },
     handleClearVisible() {
-      this.clearVisible = true
+      this.clearVisible = true;
     },
     handleChatClose(index) {
-      this.store.commit('removeChatLog', index)
+      this.store.commit('removeChatLog', index);
     },
     getCount(id) {
       if (this.newMsgLists.hasOwnProperty(id)) {
-        return this.store.states.newMsgLists[id].length
+        return this.store.states.newMsgLists[id].length;
       } else {
-        return 0
+        return 0;
       }
     }
   },
@@ -81,19 +81,19 @@ export default {
   },
   computed: {
     newMsgLists() {
-      return this.store.states.newMsgLists
+      return this.store.states.newMsgLists;
     },
     lists() {
-      return this.store.states.chatLog
+      return this.store.states.chatLog;
     },
     currentChatId() {
-      return this.store.states.currentChatId
+      return this.store.states.currentChatId;
     },
     userInfoCenter() {
-      return this.store.states.userInfoCenter
+      return this.store.states.userInfoCenter;
     }
   }
-}
+};
 </script>
 <style>
 @import url('./index.pcss');
