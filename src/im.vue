@@ -3,21 +3,21 @@
     <div class="container" :class="skin">
       <TheHeader :mine="mine" :store="store"></TheHeader>
       <div class="vue-im" ref="imdrag">
-
         <Contacts
           v-show="currentTab === 'user'"
           :store="store"
-          :friends="friends"/>
+          :friends="friends"
+        />
 
         <div class="im-chat-wrapper" v-show="currentTab === 'chat'">
-
-          <ChatList :store="store"/>
+          <ChatList :store="store" />
           <ChatBox
             :store="store"
             :action="action"
             :uploadName="uploadName"
             :maxSize="maxSize"
-            :ext="ext"/>
+            :ext="ext"
+          />
         </div>
       </div>
       <audio :src="voice" ref="voice"></audio>
@@ -183,5 +183,4 @@ export default {
   }
 }
 </script>
-<style>
-</style>
+<style></style>

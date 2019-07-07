@@ -2,19 +2,31 @@
   <div class="middle">
     <ul class="list">
       <template v-if="lists.length > 0">
-        <li class="list-item" v-for="(item, index) in lists" :key="index" @click="handleChatChange(item)" :class="{'current': currentChatId === item.id}">
+        <li
+          class="list-item"
+          v-for="(item, index) in lists"
+          :key="index"
+          @click="handleChatChange(item)"
+          :class="{ current: currentChatId === item.id }"
+        >
           <div class="avatar">
-            <img :src="item.avatar">
+            <img :src="item.avatar" />
           </div>
           <div class="user">
-            <div class="username">{{item.username}}</div>
+            <div class="username">{{ item.username }}</div>
             <div class="message" v-if="item.chatlogType === 'image'">图片</div>
-            <div class="message" v-else-if="item.chatlogType === 'file'">文件</div>
+            <div class="message" v-else-if="item.chatlogType === 'file'">
+              文件
+            </div>
             <div class="message" v-else v-html="item.lastChat"></div>
           </div>
-          <div class="newmsg-bubble" v-show="getCount(item.id)">{{getCount(item.id)}}</div>
-          <div class="time">{{item.lastChatTime | formatDate}}</div>
-          <div class="chat-close" @click.stop="handleChatClose(index)">&times;</div>
+          <div class="newmsg-bubble" v-show="getCount(item.id)">
+            {{ getCount(item.id) }}
+          </div>
+          <div class="time">{{ item.lastChatTime | formatDate }}</div>
+          <div class="chat-close" @click.stop="handleChatClose(index)">
+            &times;
+          </div>
         </li>
       </template>
       <template v-else>

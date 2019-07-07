@@ -1,6 +1,12 @@
 <template>
   <div class="emoji" v-show="emojiVisible">
-    <i v-for="(item, i) in 56" :key="i" class="emoji-item" :class="'emoji' + item" @click="handleSendEmoji(item)"></i>
+    <i
+      v-for="(item, i) in 56"
+      :key="i"
+      class="emoji-item"
+      :class="'emoji' + item"
+      @click="handleSendEmoji(item)"
+    ></i>
   </div>
 </template>
 <script>

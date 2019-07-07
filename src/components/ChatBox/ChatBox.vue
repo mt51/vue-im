@@ -1,38 +1,77 @@
 <template>
   <div class="chat-box" v-if="currentChatInfo">
     <div class="chat-box-head" v-drag="target">
-      <span class="username">{{currentChatInfo.username}}</span>
+      <span class="username">{{ currentChatInfo.username }}</span>
     </div>
     <div class="main-chat-wrap">
       <div class="main-chat-container">
         <div class="main-chat" ref="chat-main">
           <ul class="chat-list" ref="chat-list">
-            <li class="chat-item clearfix" v-for="(item, index) in records" :key="index" :class="{'mine': item.mine}">
-              <div class="time" v-if="handleTimeVisible(item, index)"><span>{{item.time | formatDate }}</span></div>
+            <li
+              class="chat-item clearfix"
+              v-for="(item, index) in records"
+              :key="index"
+              :class="{ mine: item.mine }"
+            >
+              <div class="time" v-if="handleTimeVisible(item, index)">
+                <span>{{ item.time | formatDate }}</span>
+              </div>
               <div class="avatar">
-                <img :src="getUserAvatar(item.sender)">
+                <img :src="getUserAvatar(item.sender)" />
               </div>
-              <div class="chats chats-image" v-if="item.chatlogType === 'image'">
-                <img :src="item.content">
+              <div
+                class="chats chats-image"
+                v-if="item.chatlogType === 'image'"
+              >
+                <img :src="item.content" />
               </div>
-              <div class="chats chats-file" v-else-if="item.chatlogType === 'file'">
-                <a class="down-link" :href="item.content.src" download><i class="fa fa-cloud-download down-link-icon"></i><span class="down-link-file">{{item.content.name}}</span></a>
+              <div
+                class="chats chats-file"
+                v-else-if="item.chatlogType === 'file'"
+              >
+                <a class="down-link" :href="item.content.src" download
+                  ><i class="fa fa-cloud-download down-link-icon"></i
+                  ><span class="down-link-file">{{
+                    item.content.name
+                  }}</span></a
+                >
               </div>
               <div class="chats" v-else v-html="item.content"></div>
             </li>
           </ul>
         </div>
-        <div class="chat-input" :class="{'focus': focusClass}">
+        <div class="chat-input" :class="{ focus: focusClass }">
           <Emoji v-show="emojiVisible"></Emoji>
           <div class="tool-bar">
-            <span class="tool-bar-item fa fa-smile-o emjoi" @click="handleEmojiVisible(null)"></span>
-            <el-upload :action="action" v-if="action !== ''" :before-upload="handleBeforeUpload" :on-success="handleUploadSuccess" :on-error="handleUploadError" :name="uploadName" :show-file-list="false" class="file-upload">
+            <span
+              class="tool-bar-item fa fa-smile-o emjoi"
+              @click="handleEmojiVisible(null)"
+            ></span>
+            <el-upload
+              :action="action"
+              v-if="action !== ''"
+              :before-upload="handleBeforeUpload"
+              :on-success="handleUploadSuccess"
+              :on-error="handleUploadError"
+              :name="uploadName"
+              :show-file-list="false"
+              class="file-upload"
+            >
               <span class="tool-bar-item fa fa-file-o"></span>
             </el-upload>
-            <span class="tool-bar-item history" @click="handleHistoryVisible">历史记录</span>
+            <span class="tool-bar-item history" @click="handleHistoryVisible"
+              >历史记录</span
+            >
           </div>
           <div class="input-box">
-            <textarea id="textarea" @focus="handleFocus" @blur="handleBlur"  @keyup.enter="handleSend" ref="textarea" v-model="sendMessage"></textarea>
+            <textarea
+              id="textarea"
+              @focus="handleFocus"
+              @blur="handleBlur"
+              @keyup.enter="handleSend"
+              ref="textarea"
+              v-model="sendMessage"
+            ></textarea>
           </div>
           <div class="send">
             <button class="send-btn" @click="handleSend">发送</button>
@@ -41,8 +80,12 @@
       </div>
       <ChatLog v-model="historyVisible" />
     </div>
-    <div class="image-prev" v-show="prevVisible && currentImage" @click="handleClosePrev">
-      <img :src="currentImage" @click="handleClosePrev">
+    <div
+      class="image-prev"
+      v-show="prevVisible && currentImage"
+      @click="handleClosePrev"
+    >
+      <img :src="currentImage" @click="handleClosePrev" />
     </div>
   </div>
 </template>

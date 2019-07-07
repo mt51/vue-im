@@ -1,16 +1,22 @@
 <template>
   <div class="im-header">
     <div class="current-user">
-      <img class="avatar" :src="mine.avatar">
+      <img class="avatar" :src="mine.avatar" />
       <div class="top-search" v-if="!brief">
         <div class="search-box">
           <button class="search fa fa-search"></button>
-          <input type="text" v-model="keyword" @focus="handleSRVisible">
-          <p v-show="searchVisible" class="search-close" @click="handleSRVisible">&times;</p>
+          <input type="text" v-model="keyword" @focus="handleSRVisible" />
+          <p
+            v-show="searchVisible"
+            class="search-close"
+            @click="handleSRVisible"
+          >
+            &times;
+          </p>
         </div>
       </div>
     </div>
-   <!--  <div class="search-result-panel" v-show="searchVisible">
+    <!--  <div class="search-result-panel" v-show="searchVisible">
       <div class="sr-title-empty" v-show="searchResult.length === 0">好友搜索</div>
       <div class="sr-title" v-show="searchResult.length > 0">好友</div>
       <ul class="sr-list">
@@ -21,23 +27,44 @@
       </ul>
     </div> -->
     <ul class="im-tab" v-if="!brief">
-      <li class="im-tab-item tab-chatlist" :class="{'active': currentTab === 'chat'}" title="会话列表" @click="handleCurrentTab('chat')">
-        <i class="new-msg" v-show="count !== 0">{{count}}</i>
-        <button class="btn btn-chatlist"><i class="fa fa-comment-o"></i></button>
+      <li
+        class="im-tab-item tab-chatlist"
+        :class="{ active: currentTab === 'chat' }"
+        title="会话列表"
+        @click="handleCurrentTab('chat')"
+      >
+        <i class="new-msg" v-show="count !== 0">{{ count }}</i>
+        <button class="btn btn-chatlist">
+          <i class="fa fa-comment-o"></i>
+        </button>
         <p class="ti-arrow"><i class="fa fa-caret-up"></i></p>
       </li>
-      <li class="im-tab-item tab-userlist" :class="{'active': currentTab === 'user'}" title="联系人列表" @click="handleCurrentTab('user')">
+      <li
+        class="im-tab-item tab-userlist"
+        :class="{ active: currentTab === 'user' }"
+        title="联系人列表"
+        @click="handleCurrentTab('user')"
+      >
         <button class="btn btn-userlist"><i class="fa fa-users"></i></button>
         <p class="ti-arrow"><i class="fa fa-caret-up"></i></p>
       </li>
     </ul>
     <ul class="im-tools">
       <li class="im-tools-item im-tools-skin">
-        <button class="btn btn-skin" title="皮肤" @click="handleSkinVisible"><i class="fa fa-bookmark"></i></button>
+        <button class="btn btn-skin" title="皮肤" @click="handleSkinVisible">
+          <i class="fa fa-bookmark"></i>
+        </button>
         <ul class="skin-list" v-show="skinVisible">
-          <li class="skin-item" @click="handleSkinChange('red')"><i class="fa fa-check" :class="{'active': skin === 'red'}"></i>红色</li>
-          <li class="skin-item" @click="handleSkinChange('blue')"><i class="fa fa-check" :class="{'active': skin === 'blue'}"></i>蓝色</li>
-          <li class="skin-item" @click="handleSkinChange('white')"><i class="fa fa-check" :class="{'active': skin === 'white'}"></i>白色</li>
+          <li class="skin-item" @click="handleSkinChange('red')">
+            <i class="fa fa-check" :class="{ active: skin === 'red' }"></i>红色
+          </li>
+          <li class="skin-item" @click="handleSkinChange('blue')">
+            <i class="fa fa-check" :class="{ active: skin === 'blue' }"></i>蓝色
+          </li>
+          <li class="skin-item" @click="handleSkinChange('white')">
+            <i class="fa fa-check" :class="{ active: skin === 'white' }"></i
+            >白色
+          </li>
         </ul>
       </li>
     </ul>
