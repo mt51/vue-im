@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="container" :class="skin">
-      <TheHeader :mine="mine" :store="store"></TheHeader>
+      <TheHeader></TheHeader>
       <div class="vue-im" ref="imdrag">
         <Contacts
           v-show="currentTab === 'user'"
@@ -85,14 +85,21 @@ export default {
   data() {
     const store = new IMStore(this);
     return {
+      skin: 'red',
       miniVisible: this.mini,
       historyVisible: false,
-      store
+      store,
+      currentTab: 'user'
     };
   },
   provide() {
     return {
-      handleEmitSendEvent: this.handleEmitSendEvent
+      handleEmitSendEvent: this.handleEmitSendEvent,
+      handleSkinChange: this.handleSkinChange,
+      handleTabChange: this.handleTabChange,
+      mine: this.mine,
+      store: this.store,
+      brief: this.brief
     };
   },
   methods: {
@@ -136,6 +143,12 @@ export default {
     },
     handleEmitSendEvent(data) {
       this.$emit('on-send', data);
+    },
+    handleSkinChange(skin) {
+      this.skin = skin;
+    },
+    handleTabChange(tab) {
+      this.currentTab = tab;
     }
   },
   components: {
@@ -147,14 +160,6 @@ export default {
   mounted() {
     const skin = storage.getItem('im-skin') || 'red';
     this.store.commit('setSkin', skin);
-  },
-  computed: {
-    skin() {
-      return this.store.states.skin;
-    },
-    currentTab() {
-      return this.store.states.currentTab;
-    }
   },
   watch: {
     unReadList: {
