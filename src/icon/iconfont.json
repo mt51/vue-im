@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "663195",
+      "name": "message",
+      "font_class": "i-message",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1346617",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "1381825",
+      "name": "通讯录",
+      "font_class": "tongxunlu",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "6285259",
+      "name": "setting",
+      "font_class": "setting",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    }
+  ]
+}

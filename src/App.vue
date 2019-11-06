@@ -1,29 +1,41 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="app-container">
+    <side-bar />
+    <middle />
+    <chat-box />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import { createComponent, onMounted } from '@vue/composition-api';
+import SideBar from './components/side-bar/index.vue';
+import Middle from './components/middle/index.vue';
+import ChatBox from './components/chat-box/index.vue';
 
-@Component({
+export default createComponent({
+  setup() {
+    onMounted(() => {
+      console.log('onMounted');
+    });
+  },
+
   components: {
-    HelloWorld
+    [SideBar.name]: SideBar,
+    [Middle.name]: Middle,
+    [ChatBox.name]: ChatBox
   }
-})
-export default class App extends Vue {}
+});
 </script>
 
-<style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="scss" scoped>
+.app-container {
+  display: flex;
+  // width: 100%;
+  // min-width: 800px;
+  // height: 100%;
+  // min-height: 500px;
+  width: 800px;
+  height: 700px;
+  margin: 20px auto;
 }
 </style>
