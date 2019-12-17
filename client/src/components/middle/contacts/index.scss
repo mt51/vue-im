@@ -1,0 +1,53 @@
+.contact-group {
+  .group-title {
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+
+    i {
+      display: inline-block;
+      color: #aaa;
+      transform: rotate(-90deg);
+      transition: all 0.5s;
+    }
+
+    .expand {
+      transform: rotate(0deg);
+    }
+  }
+
+  .contacts-list {
+    padding-top: 10px;
+  }
+
+  .contact-item {
+    padding: 0 20px;
+    margin-bottom: 10px;
+    display: flex;
+    height: 40px;
+    line-height: 30px;
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
+
+    &:hover {
+      background: #f3f3f3;
+    }
+
+    .contact-item__selected {
+      background-color: rgb(236, 237, 239);
+      border-right: 4px solid #48525c;
+    }
+    
+    .nickname {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+  }
+}
