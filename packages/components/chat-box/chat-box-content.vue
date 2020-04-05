@@ -7,7 +7,6 @@
 <script>
 import { defineComponent, computed } from '@vue/composition-api';
 import { useChatBoxInject } from '../../context';
-import { dayjs } from '../../utils';
 import ChatRecordItem from './chat-record-item.vue';
 
 export default defineComponent({
@@ -26,12 +25,6 @@ export default defineComponent({
       chatRecord
     }
   },
-
-  filters: {
-    formatDate(value) {
-      return dayjs.fromNow(dayjs(value))
-    }
-  }
 })
 
 </script>
