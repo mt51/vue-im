@@ -1,7 +1,9 @@
+import VueComposition from '@vue/composition-api';
 import VueIM from './App.vue'
 
 const install = (vue: any) => {
   vue.component('vue-im', VueIM);
+  vue.use(VueComposition);
 }
 
 declare global {
