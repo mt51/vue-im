@@ -1,0 +1,72 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "462793",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "663195",
+      "name": "message",
+      "font_class": "i-message",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1346617",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "1381825",
+      "name": "通讯录",
+      "font_class": "tongxunlu",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "5379849",
+      "name": "addMessage",
+      "font_class": "addMessage",
+      "unicode": "e6f1",
+      "unicode_decimal": 59121
+    },
+    {
+      "icon_id": "5504424",
+      "name": "send-message-1",
+      "font_class": "send-message-",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "6285259",
+      "name": "setting",
+      "font_class": "setting",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "7463218",
+      "name": "添加好友",
+      "font_class": "tianjiahaoyou",
+      "unicode": "e702",
+      "unicode_decimal": 59138
+    },
+    {
+      "icon_id": "10971893",
+      "name": "arrow-down",
+      "font_class": "arrow-down",
+      "unicode": "e674",
+      "unicode_decimal": 58996
+    }
+  ]
+}

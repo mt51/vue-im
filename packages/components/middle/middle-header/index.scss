@@ -1,0 +1,60 @@
+@import '../../../vars/color.scss';
+.middle-header {
+  padding: 0 20px;
+
+  .middle-header__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    box-sizing: border-box;
+  }
+
+  .middle-header__title {
+    margin: 0;
+    font-size: 14px;
+    color: $text;
+    font-weight: normal;
+    flex: 1;
+  }
+
+  .middle-header__tools {
+    width: 24px;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 18px;
+
+    &:hover {
+      color: $text;
+    }
+  }
+
+  .middle-header__search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 200px;
+    background: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 3px 10px 2px;
+    margin: 10px auto;
+
+    .search-input__icon {
+      width: 20px;
+      font-size: 14px;
+      border: 1px solid #f3f3f3;
+      color: #8f8f8f;
+    }
+
+    .search-input {
+      flex: 1;
+      font-size: 12px;
+      box-sizing: border-box;
+      border: none;
+      outline: none;
+      background-color: transparent;
+    }
+  }
+}
