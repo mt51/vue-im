@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const WebpackBar = require('webpackbar');
 const { VueLoaderPlugin } = require('vue-loader');
 const { resolve } = require('./utils');
 
@@ -48,6 +49,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: 'style/index.css'
-    })
+    }),
+    new WebpackBar({ color: 'green' }),
   ],
 };

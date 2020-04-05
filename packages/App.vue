@@ -11,6 +11,7 @@ import { noop } from './utils';
 import SideBar from './components/side-bar/index.vue';
 import Middle from './components/middle/index.vue';
 import ChatBox from './components/chat-box/index.vue';
+import './index.scss';
 
 export default {
   name: 'vue-im',
@@ -40,7 +41,3 @@ export default {
 }
 
 </script>
-
-<style lang="scss" >
-@import './index.scss';
-</style>

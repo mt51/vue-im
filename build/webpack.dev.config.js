@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const WebpackBar = require('webpackbar');
 const HTMLWebpackConfig = require('html-webpack-plugin');
 const webpackBaseConfig = require('./webpack.base.config');
 const { resolve } = require('./utils');
@@ -27,7 +26,6 @@ module.exports = merge(webpackBaseConfig, {
   },
 
   plugins: [
-    new WebpackBar({ color: 'green' }),
     new webpack.HotModuleReplacementPlugin(),
     new HTMLWebpackConfig({
       filename: 'index.html',
